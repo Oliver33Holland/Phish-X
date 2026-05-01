@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Phish X – Train & Detect</title>
+  <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
+  <link rel="icon" type="image/png" href="/static/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --border: #30363d;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --accent: #58a6ff;
+      --danger: #f85149;
+      --success: #3fb950;
+      --warn: #d29922;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: 'DM Sans', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; min-height: 100vh; }
+    .container { max-width: 900px; margin: 0 auto; padding: 2rem; }
+    h1 { font-size: 1.75rem; font-weight: 700; margin: 0 0 0.5rem; }
+    .subtitle { color: var(--muted); margin-bottom: 2rem; font-size: 0.95rem; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+    .card h2 { font-size: 1.1rem; margin: 0 0 0.75rem; font-weight: 600; }
+    .card p { margin: 0 0 0.5rem; color: var(--muted); font-size: 0.9rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+    .grid .card { margin-bottom: 0; cursor: pointer; transition: border-color 0.2s; }
+    .grid .card:hover { border-color: var(--accent); }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    button, .btn {
+      display: inline-block; background: var(--accent); color: var(--bg); border: none;
+      padding: 0.5rem 1rem; border-radius: 8px; font-family: inherit; font-size: 0.9rem; font-weight: 600;
+      cursor: pointer; margin-right: 0.5rem; margin-top: 0.5rem;
+    }
+    button.danger { background: var(--danger); }
+    button.success { background: var(--success); }
+    button.secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+    button:hover { opacity: 0.9; }
+    textarea { width: 100%; min-height: 120px; padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; resize: vertical; }
+    input[type="text"] { width: 100%; padding: 0.5rem 0.75rem; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-size: 0.9rem; }
+    input[type="checkbox"] { margin-right: 0.5rem; }
+    .risk-low { color: var(--success); }
+    .risk-medium { color: var(--warn); }
+    .risk-high, .risk-critical { color: var(--danger); }
+    .tab-btn { background: transparent; color: var(--muted); border: 1px solid var(--border); border-radius: 8px; padding: 0.4rem 0.9rem; font-size: 0.85rem; cursor: pointer; }
+    .tab-btn.active-tab { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .email-view { white-space: pre-wrap; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
+    .red-flags { margin-top: 1rem; }
+    .red-flags li { margin: 0.25rem 0; }
+    .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+    .hidden { display: none; }
+    nav { margin-bottom: 2rem; }
+    nav a { margin-right: 1rem; color: var(--muted); }
+    nav a.active { color: var(--accent); }
+    select { background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 0.5rem 0.75rem; font-size: 0.9rem; width: 100%; margin-top: 0.25rem; }
+    label { font-size: 0.85rem; color: var(--muted); display: block; margin-top: 0.75rem; margin-bottom: 0.25rem; }
+    .malware-badge { display: inline-block; background: #2d1117; color: var(--danger); border: 1px solid var(--danger); border-radius: 6px; padding: 0.2rem 0.6rem; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .training-banner { background: #1c2128; border-left: 4px solid var(--warn); padding: 0.75rem 1rem; border-radius: 0 8px 8px 0; font-size: 0.85rem; color: var(--warn); margin-bottom: 1rem; }
+    .payload-list li { margin: 0.3rem 0; font-size: 0.9rem; }
+    .gen-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .report-row { font-size: 0.85rem; padding: 0.5rem 0; border-bottom: 1px solid var(--border); }
+    .game-score { font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav>
+      <a href="#" data-page="home" class="active">Home</a>
+      <a href="#" data-page="dashboard">Dashboard</a>
+      <a href="#" data-page="campaigns">Campaigns</a>
+      <a href="#" data-page="game">Mini game</a>
+      <a href="#" data-page="emails">Phishing emails</a>
+      <a href="#" data-page="generator">Generator</a>
+      <a href="#" data-page="fakepages">Fake pages</a>
+      <a href="#" data-page="detect">Detect email</a>
+      <a href="#" data-page="voice-analyzer">Voice analyzer</a>
+      <a href="#" data-page="vishing-detect">Detect vishing</a>
+      <a href="#" data-page="vishing">Vishing scenarios</a>
+      <a href="#" data-page="reports">Reports</a>
+    </nav>
+
+    <div id="page-home">
+      <h1>Phish X</h1>
+      <p class="subtitle">Simulate phishing and vishing, detect AI-generated attempts, and improve user behaviour.</p>
+      <div class="grid" id="summaryCards"></div>
+      <div class="card">
+        <h2>Why this matters</h2>
+        <p>Phishing is increasing due to AI: highly convincing emails and deepfake voices. This tool helps organisations test and train users with safe simulations and AI-based detection.</p>
+      </div>
+    </div>
+
+    <div id="page-dashboard" class="hidden">
+      <h1>Dashboard & analytics</h1>
+      <p class="subtitle">Click rates, user performance, and risk levels.</p>
+      <div id="dashboardContent"></div>
+    </div>
+
+    <div id="page-game" class="hidden">
+      <h1>Spot the phishing</h1>
+      <p class="subtitle">Quick game: decide if each email is phishing or safe. Score points for correct answers.</p>
+      <div class="game-score" id="gameScore">Score: 0 · Rounds: 0</div>
+      <div id="gameContent"></div>
+    </div>
+
+    <div id="page-emails" class="hidden">
+      <h1>Phishing email simulations</h1>
+      <p class="subtitle">48 realistic templates across 16 brands (AWS, Zoom, Microsoft Teams, Google, Slack, and more). Filter by brand, click to view, then submit feedback.</p>
+      <div id="emailList"></div>
+      <div id="emailDetail" class="hidden card"></div>
+    </div>
+
+    <!-- ===================== CAMPAIGNS ===================== -->
+    <div id="page-campaigns" class="hidden">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+        <div><h1 style="margin:0">Campaigns</h1><p class="subtitle" style="margin:0">Create, schedule, and track phishing simulation campaigns.</p></div>
+        <button onclick="showPage('page-campaign-new')">+ New campaign</button>
+      </div>
+      <div id="campaignList"></div>
+    </div>
+
+    <div id="page-campaign-new" class="hidden">
+      <h1>New campaign</h1>
+      <p class="subtitle">Configure your phishing simulation campaign.</p>
+      <div class="card">
+        <label>Campaign name *</label>
+        <input type="text" id="cnName" placeholder="e.g. Q1 Phishing Test" />
+        <label>Description</label>
+        <input type="text" id="cnDesc" placeholder="Optional description" />
+        <label>Email template *</label>
+        <select id="cnTemplate"></select>
+        <label>Landing page (fake login)</label>
+        <select id="cnLanding">
+          <option value="google">Google sign-in</option>
+          <option value="microsoft">Microsoft account</option>
+          <option value="office365">Microsoft 365</option>
+          <option value="barclays">Barclays bank</option>
+          <option value="hsbc">HSBC bank</option>
+        </select>
+        <label>Sender name</label>
+        <input type="text" id="cnSenderName" placeholder="IT Security Team" />
+        <label>Sender email</label>
+        <input type="text" id="cnSenderEmail" placeholder="security@phishx-training.local" />
+        <label>Schedule launch (optional)</label>
+        <input type="datetime-local" id="cnScheduled" style="background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:0.5rem 0.75rem;font-size:0.9rem;width:100%;" />
+      </div>
+      <div class="card">
+        <h2>Targets</h2>
+        <p>Add targets manually or import from CSV.</p>
+        <p style="font-size:0.8rem;color:var(--muted);">CSV columns: first_name, last_name, email (optional: department, position)</p>
+        <input type="file" id="cnCsvFile" accept=".csv" style="margin:0.5rem 0;" />
+        <button class="secondary" id="cnParseCsv">Import CSV</button>
+        <div id="cnCsvPreview" style="font-size:0.82rem;color:var(--muted);margin-top:0.5rem;"></div>
+        <hr style="border:none;border-top:1px solid var(--border);margin:1rem 0;"/>
+        <p><strong>Add target manually</strong></p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+          <input type="text" id="cnTFirst" placeholder="First name" />
+          <input type="text" id="cnTLast" placeholder="Last name" />
+          <input type="text" id="cnTEmail" placeholder="Email *" />
+          <input type="text" id="cnTDept" placeholder="Department (optional)" />
+        </div>
+        <button class="secondary" id="cnAddTarget" style="margin-top:0.5rem;">Add target</button>
+        <div id="cnTargetList" style="margin-top:0.75rem;max-height:200px;overflow-y:auto;"></div>
+      </div>
+      <button id="cnCreate">Create campaign</button>
+      <button class="secondary" onclick="showPage('page-campaigns')">Cancel</button>
+    </div>
+
+    <div id="page-campaign-detail" class="hidden">
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;">
+        <button class="secondary" onclick="showPage('page-campaigns')">← Back</button>
+        <h1 id="cdTitle" style="margin:0;flex:1"></h1>
+        <span id="cdStatusBadge" style="padding:4px 12px;border-radius:20px;font-size:0.82rem;font-weight:700;"></span>
+      </div>
+      <div class="grid" id="cdStatsGrid"></div>
+      <div style="display:flex;gap:0.5rem;margin-bottom:1rem;flex-wrap:wrap;" id="cdActions"></div>
+      <div class="card">
+        <h2>Target results <span id="cdAutoRefresh" style="font-size:0.78rem;color:var(--muted);margin-left:0.5rem;"></span></h2>
+        <div id="cdResults" style="overflow-x:auto;"></div>
+      </div>
+    </div>
+
+    <div id="page-voice-analyzer" class="hidden">
+      <h1>Voice Analyzer</h1>
+      <p class="subtitle">Upload an audio or video file to detect vishing attack patterns. The audio is transcribed and analysed for suspicious speech.</p>
+      <div class="card">
+        <h2>Upload audio or video</h2>
+        <p>Supported: WAV, MP3, MP4, MOV, AVI, MKV, FLAC, M4A, OGG, AAC, WMA, WEBM, 3GP</p>
+        <p style="font-size:0.8rem;color:var(--muted);margin-top:0.25rem;">MP3/MP4/video requires ffmpeg installed on your system. WAV and FLAC work without any extra tools.</p>
+        <div id="voiceDropZone" style="margin:1rem 0;border:2px dashed var(--border);border-radius:12px;padding:2rem;text-align:center;cursor:pointer;transition:border-color 0.2s;" ondragover="event.preventDefault();this.style.borderColor='var(--accent)'" ondragleave="this.style.borderColor='var(--border)'" ondrop="handleVoiceDrop(event)">
+          <div style="font-size:2rem;margin-bottom:0.5rem;">🎙️</div>
+          <p>Drag &amp; drop audio/video here or click to browse</p>
+          <input type="file" id="voiceFileInput" accept=".wav,.mp3,.mp4,.mov,.avi,.mkv,.flac,.m4a,.ogg,.aac,.wma,.webm,.3gp" style="display:none" onchange="handleVoiceFile(this.files[0])"/>
+          <button class="secondary" style="margin-top:0.75rem" onclick="document.getElementById('voiceFileInput').click()">Browse files</button>
+        </div>
+        <div id="voiceFileName" style="font-size:0.85rem;color:var(--muted);margin-bottom:0.5rem;"></div>
+        <hr style="border:none;border-top:1px solid var(--border);margin:1rem 0;"/>
+        <h2 style="font-size:1rem;margin-bottom:0.5rem;">Or paste transcript manually</h2>
+        <p style="font-size:0.82rem;color:var(--muted);margin-bottom:0.5rem;">If transcription fails or you already have the text, paste it here.</p>
+        <textarea id="voiceManualText" placeholder="Paste call transcript here..."></textarea>
+        <button id="runVoiceAnalyze" style="margin-top:0.5rem">Analyse</button>
+      </div>
+      <div id="voiceResult" class="hidden"></div>
+    </div>
+
+    <div id="page-detect" class="hidden">
+      <h1>Detect AI-generated phishing</h1>
+      <p class="subtitle">Paste the <strong>full raw source</strong> of a suspicious email. The raw source reveals hidden routing information, sender authentication results, and domain data that are invisible in the normal email view — giving far more accurate detection than subject and body text alone.</p>
+
+      <div class="card" style="border-left:4px solid #1a73e8; background:#161b22; margin-bottom:0.75rem;">
+        <h3 style="margin-top:0; color:#58a6ff;">&#128196; How to copy the raw email source</h3>
+        <p style="margin:0 0 0.6rem; font-size:0.9rem; color:#c9d1d9;">The raw source contains the full <strong>Received</strong> chain (server hops), <strong>SPF / DKIM / DMARC</strong> authentication results, the <strong>original sender IP</strong>, and the true sending domain — all hidden from the normal email view. This is the same information IT security teams use to investigate suspicious emails.</p>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.6rem 1.2rem;">
+          <div>
+            <p style="margin:0 0 0.2rem; font-weight:600; color:#e6edf3;">&#128247; Outlook / Outlook.com</p>
+            <p style="margin:0; font-size:0.85rem; color:#8b949e;">Open the email → click the <strong>&#8943; three-dot menu</strong> (top-right) → <em>View &gt; View message source</em></p>
+          </div>
+          <div>
+            <p style="margin:0 0 0.2rem; font-weight:600; color:#e6edf3;">&#128247; Gmail</p>
+            <p style="margin:0; font-size:0.85rem; color:#8b949e;">Open the email → click the <strong>&#8942; three-dot menu</strong> (top-right) → <em>Show original</em> → <em>Copy to clipboard</em></p>
+          </div>
+          <div>
+            <p style="margin:0 0 0.2rem; font-weight:600; color:#e6edf3;">&#127822; Apple Mail</p>
+            <p style="margin:0; font-size:0.85rem; color:#8b949e;"><em>View</em> menu → <em>Message</em> → <em>Raw Source</em> &nbsp;<kbd style="background:#21262d;padding:1px 4px;border-radius:3px;">⌥⌘U</kbd></p>
+          </div>
+          <div>
+            <p style="margin:0 0 0.2rem; font-weight:600; color:#e6edf3;">&#9928; Thunderbird</p>
+            <p style="margin:0; font-size:0.85rem; color:#8b949e;"><em>View</em> → <em>Message Source</em> &nbsp;<kbd style="background:#21262d;padding:1px 4px;border-radius:3px;">Ctrl+U</kbd></p>
+          </div>
+        </div>
+        <p style="margin:0.65rem 0 0; color:#8b949e; font-size:0.82rem;">&#9888;&#65039; Select <strong>all</strong> the text in the source window (Ctrl+A / Cmd+A) and paste it in the box below.</p>
+      </div>
+
+      <div class="card">
+        <label style="font-weight:600; color:#e6edf3;">Paste full raw email source here</label>
+        <p style="margin:0.2rem 0 0.5rem; font-size:0.82rem; color:#8b949e;">Include everything from the first <code>Received:</code> line to the end of the message body.</p>
+        <textarea id="detectRaw" style="height:260px; font-family:monospace; font-size:0.78rem;" placeholder="Received: from mail.example.com (mail.example.com [203.0.113.42])&#10;  by mx.yourmail.com with ESMTPS;&#10;From: Security Team &lt;noreply@suspicious-domain.com&gt;&#10;Reply-To: attacker@gmail.com&#10;Subject: Urgent: Verify your account immediately&#10;DKIM-Signature: ...&#10;&#10;Dear Customer, your account has been suspended..."></textarea>
+        <button id="runDetect" style="margin-top:0.75rem;">&#128269; Analyse email</button>
+      </div>
+      <div id="result" class="card hidden"></div>
+    </div>
+
+    <div id="page-vishing-detect" class="hidden">
+      <h1>Detect vishing (suspicious speech)</h1>
+      <p class="subtitle">Paste transcribed call/speech text to identify suspicious vishing patterns.</p>
+      <div class="card">
+        <label>Transcribed call text</label>
+        <textarea id="vishingDetectText" placeholder="Paste what the caller said (e.g. from speech-to-text)..."></textarea>
+        <button id="runVishingDetect">Analyse</button>
+      </div>
+      <div id="vishingResult" class="card hidden"></div>
+    </div>
+
+    <div id="page-vishing" class="hidden">
+      <h1>Vishing (voice phishing) scenarios</h1>
+      <p class="subtitle">Training scenarios for phone-based social engineering.</p>
+      <div id="vishingList"></div>
+      <div id="vishingDetail" class="hidden card"></div>
+    </div>
+
+    <div id="page-generator" class="hidden">
+      <h1>Phishing Email Generator</h1>
+      <p class="subtitle">Generate realistic simulated phishing emails with malware payload breakdowns for security awareness training.</p>
+      <div class="training-banner">&#9888; TRAINING USE ONLY – All output is simulated. No real malware is generated. For security awareness and testing purposes only.</div>
+      <div class="card">
+        <div class="gen-grid">
+          <div>
+            <label>Target organisation name</label>
+            <input type="text" id="genOrg" value="Acme Corp" placeholder="e.g. Acme Corp" />
+          </div>
+          <div>
+            <label>Sender name</label>
+            <input type="text" id="genSender" value="John Smith" placeholder="e.g. John Smith" />
+          </div>
+          <div>
+            <label>Malware / payload type</label>
+            <select id="genMalware">
+              <option value="random">Random</option>
+            </select>
+          </div>
+          <div>
+            <label>Difficulty</label>
+            <select id="genDifficulty">
+              <option value="easy">Easy</option>
+              <option value="medium" selected>Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+          </div>
+        </div>
+        <button id="runGenerate">Generate phishing email</button>
+      </div>
+      <div id="generatorResult" class="hidden"></div>
+    </div>
+
+    <div id="page-fakepages" class="hidden">
+      <h1>Fake Login Page Generator</h1>
+      <p class="subtitle">Generate simulated phishing login pages for security awareness training. All pages show a training banner and capture no credentials.</p>
+      <div class="training-banner">&#9888; TRAINING USE ONLY – These pages are simulations. No credentials are collected or stored. Use only in controlled training environments.</div>
+      <div id="fakePageList" class="grid"></div>
+      <div id="fakePageOptions" class="card hidden">
+        <h2 id="fakePageTitle">Configure page</h2>
+        <label>Spoofed domain to show victims (optional)</label>
+        <input type="text" id="fakePageDomain" placeholder="e.g. accounts.google.com.verify-login.net" />
+        <p style="font-size:0.8rem;color:var(--muted);margin-top:0.3rem;">Leave blank to use a realistic example spoofed URL.</p>
+        <button id="openFakePage">Open fake login page</button>
+        <button class="secondary" id="copyFakePageUrl" style="margin-top:0.5rem">Copy page URL</button>
+        <div id="fakePageUrlDisplay" style="margin-top:0.75rem;font-family:monospace;font-size:0.82rem;color:var(--accent);word-break:break-all;"></div>
+      </div>
+      <div class="card" style="margin-top:1rem;">
+        <h2>How attackers use fake login pages</h2>
+        <p>Attackers clone real login pages and host them on lookalike domains. They trick victims via phishing emails or SMS into visiting the fake page and entering credentials. Key red flags to teach users:</p>
+        <ul style="margin-top:0.75rem;padding-left:1.25rem;font-size:0.9rem;color:var(--muted);line-height:2;">
+          <li>The URL domain doesn't match the real service (always check the address bar).</li>
+          <li>The URL may contain the real brand name but with extra text (e.g. <code>google.com.verify-now.net</code>).</li>
+          <li>The page may look pixel-perfect but the domain is wrong.</li>
+          <li>Real services never ask for your password on unexpected pages.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div id="page-reports" class="hidden">
+      <h1>Reports & feedback</h1>
+      <p class="subtitle">User feedback submissions from simulations.</p>
+      <div id="reportsContent"></div>
+    </div>
+
+    <!-- ===================== DATASETS ===================== -->
+  </div>
+
+  <script>
+    const API = (typeof window !== 'undefined' && window.location.origin) ? window.location.origin : 'http://localhost:8000';
+
+    function showPage(pageId) {
+      const pages = ['page-home','page-dashboard','page-campaigns','page-campaign-new','page-campaign-detail','page-game','page-emails','page-generator','page-fakepages','page-detect','page-voice-analyzer','page-vishing-detect','page-vishing','page-reports'];
+      pages.forEach(id => document.getElementById(id).classList.toggle('hidden', id !== pageId));
+      document.querySelectorAll('nav a').forEach(a => {
+        a.classList.toggle('active', a.dataset.page === pageId.replace('page-',''));
+      });
+      if (pageId === 'page-emails') loadEmails();
+      if (pageId === 'page-vishing') loadVishing();
+      if (pageId === 'page-dashboard') loadDashboard();
+      if (pageId === 'page-reports') loadReports();
+      if (pageId === 'page-game') initGame();
+      if (pageId === 'page-campaigns') loadCampaigns();
+      if (pageId === 'page-generator') loadMalwareTypes();
+      if (pageId === 'page-voice-analyzer') initVoiceAnalyzer();
+      if (pageId === 'page-fakepages') loadFakePageTemplates();
+    }
+
+    document.querySelectorAll('nav a').forEach(a => {
+      a.addEventListener('click', e => { e.preventDefault(); showPage('page-' + a.dataset.page); });
+    });
+
+    async function api(path) {
+      const r = await fetch(API + path);
+      if (!r.ok) throw new Error(r.statusText);
+      return r.json();
+    }
+
+    async function apiPost(path, body) {
+      const r = await fetch(API + path, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      if (!r.ok) throw new Error(r.statusText);
+      return r.json();
+    }
+
+    function escapeHtml(s) {
+      const div = document.createElement('div');
+      div.textContent = s;
+      return div.innerHTML;
+    }
+
+    // ---- Voice Analyzer ----
+    let _voiceFile = null;
+
+    function initVoiceAnalyzer() {
+      _voiceFile = null;
+      document.getElementById('voiceFileName').textContent = '';
+      document.getElementById('voiceResult').classList.add('hidden');
+      document.getElementById('voiceManualText').value = '';
+    }
+
+    function handleVoiceDrop(e) {
+      e.preventDefault();
+      document.getElementById('voiceDropZone').style.borderColor = 'var(--border)';
+      const f = e.dataTransfer.files[0];
+      if (f) handleVoiceFile(f);
+    }
+
+    function handleVoiceFile(f) {
+      _voiceFile = f;
+      document.getElementById('voiceFileName').textContent = '📎 ' + f.name + ' (' + (f.size / 1024).toFixed(1) + ' KB)';
+      document.getElementById('voiceDropZone').style.borderColor = 'var(--success)';
+    }
+
+    document.getElementById('runVoiceAnalyze').addEventListener('click', async () => {
+      const manual = document.getElementById('voiceManualText').value.trim();
+      const resultEl = document.getElementById('voiceResult');
+      if (!_voiceFile && !manual) {
+        resultEl.innerHTML = '<div class="card">Upload a file or paste a transcript to analyse.</div>';
+        resultEl.classList.remove('hidden');
+        return;
+      }
+      resultEl.innerHTML = '<div class="card">⏳ Analysing… this may take a moment for longer audio files.</div>';
+      resultEl.classList.remove('hidden');
+      try {
+        const fd = new FormData();
+        if (_voiceFile) fd.append('file', _voiceFile);
+        if (manual) fd.append('manual_transcript', manual);
+        const r = await fetch(API + '/api/voice-analyze', { method: 'POST', body: fd });
+        const d = await r.json();
+        const a = d.analysis || {};
+        const riskClass = 'risk-' + (a.risk_level || 'low');
+        const confLabel = d.transcript_confidence === 'manual' ? 'Manual' : d.transcript_confidence;
+        const warningsHtml = (d.warnings || []).length
+          ? '<div class="training-banner" style="margin-bottom:1rem;">' + d.warnings.map(w => escapeHtml(w)).join('<br/>') + '</div>' : '';
+        const patternsHtml = (a.suspicious_patterns || []).length
+          ? '<p><strong>Suspicious patterns found:</strong></p><ul class="payload-list">' +
+            a.suspicious_patterns.map(p => '<li>🚨 ' + escapeHtml(p) + '</li>').join('') + '</ul>' : '';
+        const recsHtml = (a.recommendations || []).length
+          ? '<p style="margin-top:0.75rem;"><strong>Recommendations:</strong></p><ul class="payload-list">' +
+            a.recommendations.map(r => '<li>' + escapeHtml(r) + '</li>').join('') + '</ul>' : '';
+        resultEl.innerHTML = `
+          ${warningsHtml}
+          <div class="card">
+            <h2>Analysis result</h2>
+            <p>
+              <strong>File:</strong> ${escapeHtml(d.filename)} &nbsp;|&nbsp;
+              <strong>Engine:</strong> ${escapeHtml(d.engine_used)} &nbsp;|&nbsp;
+              <strong>Transcript confidence:</strong> ${confLabel}
+            </p>
+            <p style="margin-top:0.75rem;">
+              <strong>Likely vishing:</strong> ${a.is_likely_vishing ? '⚠️ Yes' : '✅ No'} &nbsp;|&nbsp;
+              <strong>Confidence:</strong> ${((a.confidence || 0) * 100).toFixed(0)}% &nbsp;|&nbsp;
+              <span class="${riskClass}"><strong>Risk:</strong> ${a.risk_level || 'low'}</span>
+            </p>
+            ${patternsHtml}
+            ${recsHtml}
+          </div>
+          ${d.transcript ? `<div class="card">
+            <h2>Transcript</h2>
+            <div class="email-view">${escapeHtml(d.transcript)}</div>
+          </div>` : ''}
+        `;
+        resultEl.classList.remove('hidden');
+      } catch (e) {
+        resultEl.innerHTML = '<div class="card">Analysis failed. Is the server running?</div>';
+        resultEl.classList.remove('hidden');
+      }
+    });
+
+    let _selectedFakePage = null;
+
+    async function loadFakePageTemplates() {
+      try {
+        const templates = await api('/api/fakepage/templates');
+        const grid = document.getElementById('fakePageList');
+        const opts = document.getElementById('fakePageOptions');
+        opts.classList.add('hidden');
+        grid.innerHTML = templates.map(t => `
+          <div class="card" data-id="${t.id}" data-real="${escapeHtml(t.real_domain)}" data-spoofed="${escapeHtml(t.example_spoofed)}" style="cursor:pointer">
+            <h2>${escapeHtml(t.name)}</h2>
+            <p>${escapeHtml(t.description)}</p>
+            <p style="margin-top:0.5rem;font-size:0.78rem;">Real: <code style="color:var(--success)">${escapeHtml(t.real_domain)}</code></p>
+            <p style="font-size:0.78rem;">Fake example: <code style="color:var(--danger)">${escapeHtml(t.example_spoofed)}</code></p>
+          </div>
+        `).join('');
+        grid.querySelectorAll('.card').forEach(card => {
+          card.addEventListener('click', () => {
+            _selectedFakePage = card.dataset.id;
+            document.getElementById('fakePageTitle').textContent = 'Configure: ' + card.querySelector('h2').textContent;
+            document.getElementById('fakePageDomain').value = '';
+            document.getElementById('fakePageUrlDisplay').textContent = '';
+            document.getElementById('fakePageOptions').classList.remove('hidden');
+          });
+        });
+      } catch (e) {
+        document.getElementById('fakePageList').innerHTML = '<div class="card">Failed to load templates.</div>';
+      }
+    }
+
+    document.getElementById('openFakePage').addEventListener('click', () => {
+      if (!_selectedFakePage) return;
+      const domain = document.getElementById('fakePageDomain').value.trim();
+      const url = API + '/api/fakepage/view/' + _selectedFakePage + (domain ? '?spoofed_url=' + encodeURIComponent(domain) : '');
+      document.getElementById('fakePageUrlDisplay').textContent = url;
+      window.open(url, '_blank');
+    });
+
+    document.getElementById('copyFakePageUrl').addEventListener('click', () => {
+      if (!_selectedFakePage) return;
+      const domain = document.getElementById('fakePageDomain').value.trim();
+      const url = API + '/api/fakepage/view/' + _selectedFakePage + (domain ? '?spoofed_url=' + encodeURIComponent(domain) : '');
+      navigator.clipboard.writeText(url).then(() => {
+        document.getElementById('fakePageUrlDisplay').textContent = 'Copied: ' + url;
+      });
+    });
+
+    async function loadMalwareTypes() {
+      try {
+        const types = await api('/api/generator/malware-types');
+        const sel = document.getElementById('genMalware');
+        // Clear old options except Random
+        while (sel.options.length > 1) sel.remove(1);
+        types.forEach(t => {
+          const o = document.createElement('option');
+          o.value = t.type;
+          o.textContent = t.name + ' – ' + t.description.slice(0, 50) + '…';
+          sel.appendChild(o);
+        });
+      } catch (_) {}
+    }
+
+    document.getElementById('runGenerate').addEventListener('click', async () => {
+      const result = document.getElementById('generatorResult');
+      result.classList.add('hidden');
+      const req = {
+        target_org: document.getElementById('genOrg').value.trim() || 'Acme Corp',
+        sender_name: document.getElementById('genSender').value.trim() || 'John Smith',
+        malware_type: document.getElementById('genMalware').value || 'random',
+        difficulty: document.getElementById('genDifficulty').value,
+      };
+      try {
+        const d = await apiPost('/api/generator/generate', req);
+        result.innerHTML = `
+          <div class="card">
+            <div class="training-banner">&#9888; SIMULATED EMAIL – FOR SECURITY TRAINING ONLY. Do not send to real users.</div>
+            <h2>Generated phishing email</h2>
+            <p><strong>Subject:</strong> ${escapeHtml(d.subject)}</p>
+            <p><strong>From:</strong> ${escapeHtml(d.sender_display)}</p>
+            <div class="email-view" style="margin:1rem 0; padding:1rem; border:1px solid var(--border); border-radius:8px;">${escapeHtml(d.body)}</div>
+          </div>
+          <div class="card">
+            <span class="malware-badge">&#9888; ${escapeHtml(d.malware_name)}</span>
+            <h2>Payload breakdown</h2>
+            <p><strong>Type:</strong> ${escapeHtml(d.malware_name)}</p>
+            <p><strong>Description:</strong> ${escapeHtml(d.malware_description)}</p>
+            <p><strong>Delivery method:</strong> ${escapeHtml(d.delivery_method)}</p>
+            <p style="margin-top:0.75rem;"><strong>Indicators to look for:</strong></p>
+            <ul class="payload-list">${d.payload_indicators.map(i => '<li>&#128680; ' + escapeHtml(i) + '</li>').join('')}</ul>
+            <p style="margin-top:0.75rem;"><strong>Real-world examples:</strong> ${d.real_world_examples.join(', ')}</p>
+          </div>
+          <div class="card">
+            <h2>Training notes (${escapeHtml(req.difficulty)} difficulty)</h2>
+            <ul class="payload-list">${d.training_notes.map(n => '<li>' + escapeHtml(n) + '</li>').join('')}</ul>
+          </div>
+        `;
+        result.classList.remove('hidden');
+      } catch (e) {
+        result.innerHTML = '<div class="card">Generation failed. Is the server running?</div>';
+        result.classList.remove('hidden');
+      }
+    });
+
+    async function loadSummary() {
+      try {
+        const s = await api('/api/simulations');
+        document.getElementById('summaryCards').innerHTML = `
+          <div class="card" onclick="showPage('page-dashboard')">
+            <h2>Dashboard</h2>
+            <p>Click rates, performance, risk levels</p>
+          </div>
+          <div class="card" onclick="showPage('page-game')">
+            <h2>Mini game</h2>
+            <p>Spot the phishing – gamified training</p>
+          </div>
+          <div class="card" onclick="showPage('page-emails')">
+            <h2>Phishing emails</h2>
+            <p>${s.total_emails} simulated emails across 16 brands</p>
+          </div>
+          <div class="card" onclick="showPage('page-campaigns')">
+            <h2>📋 Campaigns</h2>
+            <p>Create, schedule, and track phishing simulation campaigns</p>
+          </div>
+          <div class="card" onclick="showPage('page-generator')">
+            <h2>&#9888; Generator</h2>
+            <p>Generate phishing emails with malware payload breakdown</p>
+          </div>
+          <div class="card" onclick="showPage('page-fakepages')">
+            <h2>&#128279; Fake pages</h2>
+            <p>Simulated fake login pages – Google, Microsoft, banks</p>
+          </div>
+          <div class="card" onclick="showPage('page-vishing')">
+            <h2>Vishing</h2>
+            <p>${s.total_vishing} voice phishing scenarios</p>
+          </div>
+          <div class="card" onclick="showPage('page-detect')">
+            <h2>Detect email</h2>
+            <p>Analyse text for AI-phishing</p>
+          </div>
+          <div class="card" onclick="showPage('page-voice-analyzer')">
+            <h2>🎙️ Voice analyzer</h2>
+            <p>Upload audio/video to detect vishing</p>
+          </div>
+          <div class="card" onclick="showPage('page-vishing-detect')">
+            <h2>Detect vishing</h2>
+            <p>Suspicious speech patterns</p>
+          </div>
+          <div class="card" onclick="showPage('page-reports')">
+            <h2>Reports</h2>
+            <p>Feedback submissions</p>
+          </div>
+        `;
+      } catch (e) {
+        document.getElementById('summaryCards').innerHTML = '<div class="card">Could not load. Is the server running? <a href="/docs">Open /docs</a></div>';
+      }
+    }
+
+    async function loadDashboard() {
+      try {
+        const d = await api('/api/analytics/dashboard');
+        const riskClass = 'risk-' + (d.overall_risk_level || 'low');
+        document.getElementById('dashboardContent').innerHTML = `
+          <div class="grid">
+            <div class="card">
+              <h2>Safe behaviour rate</h2>
+              <p class="stat-value">${d.safe_behavior_rate_pct || 0}%</p>
+              <p>Users who acted safely</p>
+            </div>
+            <div class="card">
+              <h2>Report rate</h2>
+              <p class="stat-value">${d.report_rate_pct || 0}%</p>
+              <p>Users who reported attempts</p>
+            </div>
+            <div class="card">
+              <h2>Phishing click rate</h2>
+              <p class="stat-value">${d.click_through_rate_phishing_pct || 0}%</p>
+              <p>Users who clicked phishing</p>
+            </div>
+            <div class="card">
+              <h2>Game accuracy</h2>
+              <p class="stat-value">${d.game_accuracy_pct || 0}%</p>
+              <p>Correct answers in mini game</p>
+            </div>
+            <div class="card">
+              <h2>Total points</h2>
+              <p class="stat-value">${d.game_total_points || 0}</p>
+              <p>From mini game rounds</p>
+            </div>
+            <div class="card">
+              <h2>Overall risk</h2>
+              <p class="stat-value ${riskClass}">${d.overall_risk_level || 'low'}</p>
+              <p>Based on user behaviour</p>
+            </div>
+          </div>
+          <div class="card">
+            <h2>Totals</h2>
+            <p>Feedback: ${d.total_feedback || 0} · Clicks: ${d.total_clicks || 0} · Game rounds: ${d.total_game_rounds || 0} · Simulations viewed: ${d.total_simulations_viewed || 0}</p>
+          </div>
+        `;
+      } catch (e) {
+        document.getElementById('dashboardContent').innerHTML = '<div class="card">Could not load dashboard.</div>';
+      }
+    }
+
+    let gameScore = 0, gameRounds = 0, currentGameEmail = null;
+
+    async function initGame() {
+      gameScore = 0;
+      gameRounds = 0;
+      document.getElementById('gameScore').textContent = 'Score: 0 · Rounds: 0';
+      await loadNextGameEmail();
+    }
+
+    async function loadNextGameEmail() {
+      try {
+        currentGameEmail = await api('/api/game/random');
+        const brandHtml = currentGameEmail.brand && currentGameEmail.brand !== 'Legitimate'
+          ? _brandBadge(currentGameEmail.brand) : '';
+        document.getElementById('gameContent').innerHTML = `
+          <div class="card">
+            <div style="margin-bottom:0.5rem;">${brandHtml}</div>
+            <h2>${escapeHtml(currentGameEmail.subject)}</h2>
+            <p style="font-size:0.85rem;color:var(--muted);">From: ${escapeHtml(currentGameEmail.sender)}</p>
+            <div class="email-view" style="padding:0.75rem;border:1px solid var(--border);border-radius:8px;margin:0.75rem 0;">${escapeHtml(currentGameEmail.body)}</div>
+            <p style="margin-top:1rem;"><strong>Is this email phishing or safe?</strong></p>
+            <button class="danger" id="gamePhishing">🎣 Phishing</button>
+            <button class="success" id="gameSafe">✅ Safe</button>
+          </div>
+        `;
+        document.getElementById('gamePhishing').onclick = () => submitGameAnswer(true);
+        document.getElementById('gameSafe').onclick = () => submitGameAnswer(false);
+      } catch (e) {
+        document.getElementById('gameContent').innerHTML = '<div class="card">Could not load game.</div>';
+      }
+    }
+
+    async function submitGameAnswer(userSaidPhishing) {
+      const isPhishing = currentGameEmail?.is_phishing ?? false;
+      const correct = userSaidPhishing === isPhishing;
+      const points = correct ? 10 : 0;
+      gameScore += points;
+      gameRounds++;
+      try {
+        await apiPost('/api/game/score', {
+          correct,
+          simulation_id: currentGameEmail?.id ?? '',
+          difficulty: currentGameEmail?.difficulty ?? 'easy',
+          points,
+        });
+      } catch (_) {}
+      const flags = (currentGameEmail?.red_flags || []).map(f => '<li>' + escapeHtml(f) + '</li>').join('');
+      document.getElementById('gameContent').innerHTML = `
+        <div class="card">
+          <h2>${correct ? 'Correct!' : 'Incorrect'}</h2>
+          <p>This email was ${isPhishing ? 'phishing' : 'safe'}.</p>
+          ${flags ? '<div class="red-flags"><strong>Red flags:</strong><ul>' + flags + '</ul></div>' : ''}
+          <button onclick="loadNextGameEmail()">Next round</button>
+        </div>
+      `;
+      document.getElementById('gameScore').textContent = 'Score: ' + gameScore + ' · Rounds: ' + gameRounds;
+    }
+
+    const _difficultyColour = { easy: 'var(--success)', medium: 'var(--warn)', hard: 'var(--danger)' };
+
+    function _brandBadge(brand) {
+      if (!brand || brand === 'Generic') return '';
+      return `<span style="display:inline-block;background:#1c2128;color:var(--accent);border:1px solid var(--accent);border-radius:6px;padding:0.15rem 0.5rem;font-size:0.75rem;font-weight:600;margin-right:0.4rem;">${escapeHtml(brand)}</span>`;
+    }
+
+    let _allEmails = [], _emailBrandFilter = '';
+
+    function _renderEmailList() {
+      const list = document.getElementById('emailList');
+      const filtered = _emailBrandFilter
+        ? _allEmails.filter(e => (e.brand || 'Generic') === _emailBrandFilter)
+        : _allEmails;
+      if (!filtered.length) {
+        list.innerHTML = '<div class="card">No emails match this filter.</div>';
+        return;
+      }
+      list.innerHTML = filtered.map(e => `
+        <div class="card" data-id="${e.id}" style="cursor:pointer;border-left:3px solid ${_difficultyColour[e.difficulty] || 'var(--border)'}">
+          ${_brandBadge(e.brand)}<span style="font-size:0.78rem;color:${_difficultyColour[e.difficulty] || 'var(--muted)'}">${escapeHtml(e.difficulty)}</span>
+          <h2 style="margin:0.35rem 0 0.2rem;">${escapeHtml(e.subject)}</h2>
+          <p style="margin:0;font-size:0.82rem;">From: ${escapeHtml(e.sender)}</p>
+        </div>
+      `).join('');
+      list.querySelectorAll('.card').forEach(card => {
+        card.addEventListener('click', async () => {
+          const email = await api('/api/simulations/emails/' + card.dataset.id);
+          try { await fetch(API + '/api/analytics/view?simulation_id=' + encodeURIComponent(email.id) + '&simulation_type=email', { method: 'POST' }); } catch (_) {}
+          const detail = document.getElementById('emailDetail');
+          const diffColour = _difficultyColour[email.difficulty] || 'var(--muted)';
+          detail.innerHTML = `
+            <div style="margin-bottom:0.75rem;">
+              ${_brandBadge(email.brand)}<span style="font-size:0.8rem;color:${diffColour};font-weight:600;">${escapeHtml(email.difficulty)}</span>
+            </div>
+            <h2 style="margin:0 0 0.4rem;">${escapeHtml(email.subject)}</h2>
+            <p style="font-size:0.85rem;color:var(--muted);margin:0 0 1rem;">From: ${escapeHtml(email.sender)}</p>
+            <div class="training-banner" style="margin-bottom:1rem;">&#9888; SIMULATION – For security awareness training only. {{.FirstName}}, {{.LastName}}, and {{.URL}} are GoPhish-style placeholders.</div>
+            <div class="email-view" style="padding:1rem;border:1px solid var(--border);border-radius:8px;margin-bottom:1rem;">${escapeHtml(email.body)}</div>
+            <div class="red-flags"><strong>Red flags to spot:</strong><ul>${email.red_flags.map(f => '<li>🚩 ' + escapeHtml(f) + '</li>').join('')}</ul></div>
+            <div style="margin-top:1rem;">
+              <label><input type="checkbox" id="emailActedSafely" checked /> I acted safely</label><br/>
+              <label><input type="checkbox" id="emailReported" /> I reported it</label><br/>
+              <button onclick="submitEmailFeedback('${email.id}')">Submit feedback</button>
+              <button class="secondary" onclick="document.getElementById('emailDetail').classList.add('hidden')">Close</button>
+            </div>
+          `;
+          detail.classList.remove('hidden');
+          detail.scrollIntoView({ behavior: 'smooth' });
+        });
+      });
+    }
+
+    async function loadEmails() {
+      const list = document.getElementById('emailList');
+      const detail = document.getElementById('emailDetail');
+      detail.classList.add('hidden');
+      try {
+        const emails = await api('/api/simulations/emails');
+        // Fetch full email data to get brand field
+        const full = await Promise.all(emails.map(e => api('/api/simulations/emails/' + e.id)));
+        _allEmails = full;
+        _emailBrandFilter = '';
+
+        // Build brand filter bar
+        const brands = [...new Set(full.map(e => e.brand || 'Generic'))].sort();
+        const filterBar = document.createElement('div');
+        filterBar.style.cssText = 'margin-bottom:1rem;display:flex;flex-wrap:wrap;gap:0.4rem;';
+        filterBar.innerHTML = `<button class="secondary" id="brandFilterAll" style="font-size:0.8rem;padding:0.25rem 0.7rem;">All (${full.length})</button>` +
+          brands.map(b => `<button class="secondary brand-filter-btn" data-brand="${escapeHtml(b)}" style="font-size:0.8rem;padding:0.25rem 0.7rem;">${escapeHtml(b)} (${full.filter(e => (e.brand || 'Generic') === b).length})</button>`).join('');
+        list.innerHTML = '';
+        list.appendChild(filterBar);
+
+        filterBar.querySelector('#brandFilterAll').addEventListener('click', () => {
+          _emailBrandFilter = '';
+          _renderEmailList();
+        });
+        filterBar.querySelectorAll('.brand-filter-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            _emailBrandFilter = btn.dataset.brand;
+            _renderEmailList();
+          });
+        });
+
+        const emailsContainer = document.createElement('div');
+        emailsContainer.id = 'emailListCards';
+        list.appendChild(emailsContainer);
+        // Override _renderEmailList to use the inner container
+        const origRender = _renderEmailList;
+        window._renderEmailList = function() {
+          const filtered = _emailBrandFilter
+            ? _allEmails.filter(e => (e.brand || 'Generic') === _emailBrandFilter)
+            : _allEmails;
+          emailsContainer.innerHTML = filtered.map(e => `
+            <div class="card" data-id="${e.id}" style="cursor:pointer;border-left:3px solid ${_difficultyColour[e.difficulty] || 'var(--border)'}">
+              ${_brandBadge(e.brand)}<span style="font-size:0.78rem;color:${_difficultyColour[e.difficulty] || 'var(--muted)'}">${escapeHtml(e.difficulty)}</span>
+              <h2 style="margin:0.35rem 0 0.2rem;">${escapeHtml(e.subject)}</h2>
+              <p style="margin:0;font-size:0.82rem;">From: ${escapeHtml(e.sender)}</p>
+            </div>
+          `).join('');
+          emailsContainer.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('click', async () => {
+              const email = await api('/api/simulations/emails/' + card.dataset.id);
+              try { await fetch(API + '/api/analytics/view?simulation_id=' + encodeURIComponent(email.id) + '&simulation_type=email', { method: 'POST' }); } catch (_) {}
+              const detailEl = document.getElementById('emailDetail');
+              const diffColour = _difficultyColour[email.difficulty] || 'var(--muted)';
+              detailEl.innerHTML = `
+                <div style="margin-bottom:0.75rem;">
+                  ${_brandBadge(email.brand)}<span style="font-size:0.8rem;color:${diffColour};font-weight:600;">${escapeHtml(email.difficulty)}</span>
+                </div>
+                <h2 style="margin:0 0 0.4rem;">${escapeHtml(email.subject)}</h2>
+                <p style="font-size:0.85rem;color:var(--muted);margin:0 0 1rem;">From: ${escapeHtml(email.sender)}</p>
+                <div class="training-banner" style="margin-bottom:1rem;">&#9888; SIMULATION – For security awareness training only. {{.FirstName}}, {{.LastName}}, and {{.URL}} are GoPhish-style placeholders.</div>
+                <div class="email-view" style="padding:1rem;border:1px solid var(--border);border-radius:8px;margin-bottom:1rem;">${escapeHtml(email.body)}</div>
+                <div class="red-flags"><strong>Red flags to spot:</strong><ul>${email.red_flags.map(f => '<li>🚩 ' + escapeHtml(f) + '</li>').join('')}</ul></div>
+                <div style="margin-top:1rem;">
+                  <label><input type="checkbox" id="emailActedSafely" checked /> I acted safely</label><br/>
+                  <label><input type="checkbox" id="emailReported" /> I reported it</label><br/>
+                  <button onclick="submitEmailFeedback('${email.id}')">Submit feedback</button>
+                  <button class="secondary" onclick="document.getElementById('emailDetail').classList.add('hidden')">Close</button>
+                </div>
+              `;
+              detailEl.classList.remove('hidden');
+              detailEl.scrollIntoView({ behavior: 'smooth' });
+            });
+          });
+        };
+        window._renderEmailList();
+      } catch (e) {
+        list.innerHTML = '<div class="card">Failed to load emails.</div>';
+      }
+    }
+
+    async function submitEmailFeedback(simId) {
+      const acted = document.getElementById('emailActedSafely')?.checked ?? true;
+      const reported = document.getElementById('emailReported')?.checked ?? false;
+      try {
+        await apiPost('/api/feedback', { simulation_id: simId, simulation_type: 'email', user_acted_safely: acted, reported });
+        alert('Feedback submitted.');
+      } catch (e) {
+        alert('Failed to submit.');
+      }
+    }
+
+    async function loadVishing() {
+      const list = document.getElementById('vishingList');
+      const detail = document.getElementById('vishingDetail');
+      detail.classList.add('hidden');
+      try {
+        const scenarios = await api('/api/simulations/vishing');
+        list.innerHTML = scenarios.map(s => `
+          <div class="card" data-id="${s.id}" style="cursor:pointer">
+            <h2>${escapeHtml(s.title)}</h2>
+            <p>${escapeHtml(s.caller_pretext)} · ${s.difficulty}</p>
+          </div>
+        `).join('');
+        list.querySelectorAll('.card').forEach(card => {
+          card.addEventListener('click', () => {
+            const s = scenarios.find(x => x.id === card.dataset.id);
+            if (!s) return;
+            detail.innerHTML = `
+              <h2>${escapeHtml(s.title)}</h2>
+              <p><strong>Caller claims to be:</strong> ${escapeHtml(s.caller_pretext)}</p>
+              <p><strong>Scenario:</strong> ${escapeHtml(s.scenario)}</p>
+              <p><strong>Attacker objective:</strong> ${escapeHtml(s.objective)}</p>
+              <div class="red-flags"><strong>Red flags:</strong><ul>${s.red_flags.map(f => '<li>' + escapeHtml(f) + '</li>').join('')}</ul></div>
+              <p><strong>Correct response:</strong> ${escapeHtml(s.correct_response)}</p>
+              <div style="margin-top:1rem;">
+                <label><input type="checkbox" id="vishActedSafely" checked /> I would act safely</label><br/>
+                <label><input type="checkbox" id="vishReported" /> I would report</label><br/>
+                <button onclick="submitVishingFeedback('${s.id}')">Submit feedback</button>
+              </div>
+            `;
+            detail.classList.remove('hidden');
+          });
+        });
+      } catch (e) {
+        list.innerHTML = '<div class="card">Failed to load vishing scenarios.</div>';
+      }
+    }
+
+    async function submitVishingFeedback(simId) {
+      const acted = document.getElementById('vishActedSafely')?.checked ?? true;
+      const reported = document.getElementById('vishReported')?.checked ?? false;
+      try {
+        await apiPost('/api/feedback', { simulation_id: simId, simulation_type: 'vishing', user_acted_safely: acted, reported });
+        alert('Feedback submitted.');
+      } catch (e) {
+        alert('Failed to submit.');
+      }
+    }
+
+    async function loadReports() {
+      try {
+        const { entries } = await api('/api/reports/feedback');
+        const html = entries.length
+          ? entries.map(e => `
+            <div class="report-row">
+              <strong>${escapeHtml(e.simulation_id)}</strong> · ${e.simulation_type} · 
+              Safe: ${e.user_acted_safely ? 'Yes' : 'No'} · Reported: ${e.reported ? 'Yes' : 'No'} · ${e.timestamp || ''}
+            </div>
+          `).join('')
+          : '<div class="card">No feedback submissions yet. Complete simulations and submit feedback.</div>';
+        document.getElementById('reportsContent').innerHTML = html;
+      } catch (e) {
+        document.getElementById('reportsContent').innerHTML = '<div class="card">Could not load reports.</div>';
+      }
+    }
+
+    document.getElementById('runDetect').addEventListener('click', async () => {
+      const resultEl = document.getElementById('result');
+      const raw = document.getElementById('detectRaw').value.trim();
+      if (!raw) {
+        resultEl.innerHTML = '<p style="color:#f85149;">&#9888;&#65039; Paste the full raw email source first. See the instructions above for how to copy it from your email client.</p>';
+        resultEl.classList.remove('hidden');
+        return;
+      }
+      resultEl.innerHTML = '<p>&#9203; Analysing headers and content…</p>';
+      resultEl.classList.remove('hidden');
+      try {
+        const d = await apiPost('/api/detect', { raw_email: raw });
+        const riskColor = {critical:'#f85149', high:'#d29922', medium:'#e3b341', low:'#3fb950'}[d.risk_level] || '#8b949e';
+        const riskIcon  = {critical:'&#128308;', high:'&#128992;', medium:'&#128993;', low:'&#128994;'}[d.risk_level] || '&#9898;';
+        const phishColor = d.is_likely_phishing ? '#f85149' : '#3fb950';
+        const phishLabel = d.is_likely_phishing ? 'YES – LIKELY PHISHING' : 'No – appears legitimate';
+
+        // ── Verdict bar ──────────────────────────────────────────────────────
+        const verdictBar = `
+          <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap; background:#161b22; border:1px solid ${riskColor}; border-radius:8px; padding:0.85rem 1.1rem; margin-bottom:1rem;">
+            <span style="font-size:1.5rem;">${riskIcon}</span>
+            <div>
+              <div style="font-size:0.75rem; color:#8b949e; text-transform:uppercase; letter-spacing:0.05em;">Verdict</div>
+              <div style="font-size:1.1rem; font-weight:700; color:${phishColor};">${phishLabel}</div>
+            </div>
+            <div style="margin-left:auto; text-align:right;">
+              <div style="font-size:0.75rem; color:#8b949e;">Risk level</div>
+              <div style="font-size:1rem; font-weight:700; color:${riskColor};">${(d.risk_level||'').toUpperCase()}</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:0.75rem; color:#8b949e;">Confidence</div>
+              <div style="font-size:1rem; font-weight:700; color:#e6edf3;">${(d.confidence * 100).toFixed(0)}%</div>
+            </div>
+          </div>`;
+
+        // ── ML model badges ──────────────────────────────────────────────────
+        let mlHtml = '';
+        if (d.ml_scores && (d.ml_scores.nb_confidence !== undefined)) {
+          const nb = d.ml_scores.nb_confidence, rf = d.ml_scores.rf_confidence, ens = d.ml_scores.ensemble_score;
+          const badge = (label, score) => {
+            const pct = (score * 100).toFixed(0);
+            const col = score >= 0.6 ? '#f85149' : score >= 0.4 ? '#d29922' : '#3fb950';
+            return `<div style="flex:1; min-width:120px; background:#1c2128; border:1px solid #30363d; border-radius:6px; padding:0.5rem 0.8rem; text-align:center;">
+              <div style="font-size:0.7rem; color:#8b949e; margin-bottom:0.15rem;">${label}</div>
+              <div style="font-size:1rem; font-weight:700; color:${col};">${pct}%</div>
+            </div>`;
+          };
+          mlHtml = `<div style="margin-bottom:0.9rem;">
+            <p style="margin:0 0 0.4rem; font-size:0.8rem; color:#8b949e; text-transform:uppercase; letter-spacing:0.05em;">&#129302; ML model scores (TF-IDF + trained classifiers)</p>
+            <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+              ${badge('Naïve Bayes', nb)}
+              ${badge('Random Forest', rf)}
+              ${badge('Ensemble', ens)}
+            </div>
+          </div>`;
+        }
+
+        // ── Header findings ──────────────────────────────────────────────────
+        let headerHtml = '';
+        if (d.header_findings && d.header_findings.length) {
+          headerHtml = `<div style="background:#1a1e26; border-left:4px solid #d29922; border-radius:6px; padding:0.75rem 1rem; margin-bottom:0.9rem;">
+            <p style="margin:0 0 0.4rem; font-weight:600;">&#128269; Header analysis — ${d.header_findings.length} issue${d.header_findings.length>1?'s':''} found</p>
+            <ul style="margin:0; padding-left:1.2rem;">${d.header_findings.map(x=>'<li style="margin-bottom:0.3rem; font-size:0.88rem;">'+escapeHtml(x)+'</li>').join('')}</ul>
+          </div>`;
+        } else if (d.extracted_headers && Object.keys(d.extracted_headers).length) {
+          headerHtml = `<div style="background:#1a1e26; border-left:4px solid #3fb950; border-radius:6px; padding:0.6rem 1rem; margin-bottom:0.9rem;">
+            <p style="margin:0; font-size:0.88rem; color:#3fb950;">&#9989; No header anomalies detected (SPF/DKIM/DMARC, domain checks passed)</p>
+          </div>`;
+        }
+
+        // ── Extracted headers table ──────────────────────────────────────────
+        let headersTable = '';
+        if (d.extracted_headers && Object.keys(d.extracted_headers).length) {
+          const rows = Object.entries(d.extracted_headers)
+            .filter(([,v]) => v && v !== '(not set)' && v !== '(not present)')
+            .map(([k,v]) => {
+              const val = String(v).slice(0, 300);
+              const highlight = (k === 'DKIM-Signature' && v === 'MISSING') || (k === 'Received-SPF' && /fail/i.test(val)) || (k === 'Authentication-Results' && /fail/i.test(val));
+              return `<tr>
+                <td style="color:#8b949e; white-space:nowrap; padding:0.25rem 0.8rem 0.25rem 0; vertical-align:top; font-size:0.8rem;">${escapeHtml(k)}</td>
+                <td style="word-break:break-all; font-size:0.8rem; padding:0.25rem 0; ${highlight?'color:#f85149;':''}">${escapeHtml(val)}</td>
+              </tr>`;
+            }).join('');
+          if (rows) {
+            headersTable = `<div style="margin-bottom:0.9rem;">
+              <p style="margin:0 0 0.4rem; font-size:0.8rem; color:#8b949e; text-transform:uppercase; letter-spacing:0.05em;">&#128196; Extracted header values</p>
+              <div style="background:#161b22; border:1px solid #30363d; border-radius:6px; padding:0.5rem 0.75rem; overflow-x:auto;">
+                <table style="width:100%; border-collapse:collapse;">${rows}</table>
+              </div>
+            </div>`;
+          }
+        }
+
+        // ── Content signals ──────────────────────────────────────────────────
+        const aiPhrases = d.ai_generated_indicators?.length
+          ? `<p style="margin:0.4rem 0; font-size:0.88rem;"><strong>&#129302; AI-style phrases:</strong> ${d.ai_generated_indicators.map(x=>'<code style="background:#21262d;padding:1px 5px;border-radius:3px;">'+escapeHtml(x)+'</code>').join(' ')}</p>` : '';
+        const redFlags = d.red_flags?.length
+          ? `<p style="margin:0.4rem 0; font-size:0.88rem;"><strong>&#9888;&#65039; Content red flags:</strong> ${d.red_flags.map(x=>'<code style="background:#21262d;padding:1px 5px;border-radius:3px;">'+escapeHtml(x)+'</code>').join(' ')}</p>` : '';
+
+        // ── Recommendations ──────────────────────────────────────────────────
+        const recs = (d.recommendations || []).length
+          ? `<div style="margin-top:0.9rem;">
+              <p style="margin:0 0 0.4rem; font-weight:600;">&#128161; Recommendations</p>
+              <ul style="margin:0; padding-left:1.2rem;">${(d.recommendations||[]).map(x=>'<li style="margin-bottom:0.3rem; font-size:0.88rem;">'+escapeHtml(x)+'</li>').join('')}</ul>
+            </div>` : '';
+
+        resultEl.innerHTML = `
+          <h2 style="margin-top:0;">Analysis result</h2>
+          ${verdictBar}
+          ${mlHtml}
+          ${headerHtml}
+          ${headersTable}
+          ${(aiPhrases || redFlags) ? `<div style="margin-bottom:0.9rem;">${aiPhrases}${redFlags}</div>` : ''}
+          ${recs}
+        `;
+        resultEl.classList.remove('hidden');
+      } catch (e) {
+        resultEl.innerHTML = '<p style="color:#f85149;">Analysis failed. Is the server running?</p>';
+        resultEl.classList.remove('hidden');
+      }
+    });
+
+    document.getElementById('runVishingDetect').addEventListener('click', async () => {
+      const text = document.getElementById('vishingDetectText').value.trim();
+      const resultEl = document.getElementById('vishingResult');
+      if (!text) { resultEl.innerHTML = '<p>Enter transcribed text.</p>'; resultEl.classList.remove('hidden'); return; }
+      try {
+        const d = await apiPost('/api/detect/vishing', { text });
+        const riskClass = 'risk-' + (d.risk_level || 'low');
+        resultEl.innerHTML = `
+          <h2>Vishing analysis</h2>
+          <p><strong>Likely vishing:</strong> ${d.is_likely_vishing ? 'Yes' : 'No'} · <strong>Confidence:</strong> ${(d.confidence * 100).toFixed(0)}% · <span class="${riskClass}"><strong>Risk:</strong> ${d.risk_level}</span></p>
+          ${d.suspicious_patterns?.length ? '<p><strong>Suspicious patterns:</strong> ' + d.suspicious_patterns.join(', ') + '</p>' : ''}
+          <p><strong>Recommendations:</strong></p><ul>${(d.recommendations || []).map(x => '<li>' + escapeHtml(x) + '</li>').join('')}</ul>
+        `;
+        resultEl.classList.remove('hidden');
+      } catch (e) {
+        resultEl.innerHTML = '<p>Analysis failed.</p>';
+        resultEl.classList.remove('hidden');
+      }
+    });
+
+    loadSummary();
+
+    // =====================================================================
+    // CAMPAIGN MANAGEMENT
+    // =====================================================================
+
+    let _campaignTargetsDraft = []; // targets accumulated before campaign create
+    let _activeCampaignId = null;
+    let _cdRefreshTimer = null;
+
+    // ---- status badge helper ----
+    function statusBadgeStyle(status) {
+      const map = {
+        draft: 'background:#444;color:#ddd',
+        scheduled: 'background:#1a73e8;color:#fff',
+        running: 'background:#2ea043;color:#fff',
+        paused: 'background:#d29922;color:#111',
+        completed: 'background:#6e7681;color:#fff',
+      };
+      return map[status] || 'background:#444;color:#ddd';
+    }
+
+    // ---- campaign list ----
+    async function loadCampaigns() {
+      const el = document.getElementById('campaignList');
+      el.innerHTML = '<p>Loading…</p>';
+      try {
+        const r = await fetch('/api/campaigns');
+        const campaigns = await r.json();
+        if (!campaigns.length) {
+          el.innerHTML = '<p style="color:var(--muted)">No campaigns yet. Click <strong>+ New campaign</strong> to create one.</p>';
+          return;
+        }
+        el.innerHTML = campaigns.map(c => {
+          const total = c.targets ? c.targets.length : 0;
+          return `<div class="card" style="cursor:pointer;transition:border 0.15s;" onclick="openCampaign('${c.id}')" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+            <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+              <strong style="font-size:1.05rem;flex:1">${escapeHtml(c.name)}</strong>
+              <span style="padding:3px 10px;border-radius:20px;font-size:0.78rem;font-weight:700;${statusBadgeStyle(c.status)}">${c.status.toUpperCase()}</span>
+            </div>
+            <p style="color:var(--muted);margin:0.25rem 0 0.5rem;">${escapeHtml(c.description || '')}</p>
+            <div style="display:flex;gap:1.5rem;font-size:0.85rem;color:var(--muted);">
+              <span>👥 ${total} target${total !== 1 ? 's' : ''}</span>
+              <span>📅 ${c.created_at ? c.created_at.substring(0, 10) : ''}</span>
+              ${c.scheduled_at ? `<span>⏰ ${c.scheduled_at.substring(0, 16).replace('T', ' ')}</span>` : ''}
+              ${c.launched_at ? `<span>🚀 Launched ${c.launched_at.substring(0, 16).replace('T', ' ')}</span>` : ''}
+            </div>
+          </div>`;
+        }).join('');
+      } catch (e) {
+        el.innerHTML = '<p>Failed to load campaigns.</p>';
+      }
+    }
+
+    // ---- new campaign form ----
+    async function initNewCampaignForm() {
+      _campaignTargetsDraft = [];
+      document.getElementById('cnTargetList').innerHTML = '';
+      document.getElementById('cnCsvPreview').textContent = '';
+      // load email templates
+      const sel = document.getElementById('cnTemplate');
+      sel.innerHTML = '<option value="">Loading…</option>';
+      const r = await fetch('/api/campaign-templates');
+      const templates = await r.json();
+      // Group templates: built-in first, then LinkSec brand templates
+      const builtin = templates.filter(t => !t.brand || t.brand === 'Generic' || !t.id.startsWith('tpl_ls_'));
+      const linksec = templates.filter(t => t.id && t.id.startsWith('tpl_ls_'));
+      let optHtml = '<optgroup label="Built-in templates">' +
+        builtin.map(t => `<option value="${t.id}">${escapeHtml(t.name)}</option>`).join('') + '</optgroup>';
+      if (linksec.length) {
+        optHtml += '<optgroup label="LinkSec Brand Templates (16 brands)">' +
+          linksec.map(t => `<option value="${t.id}">${escapeHtml(t.name)}</option>`).join('') + '</optgroup>';
+      }
+      sel.innerHTML = optHtml;
+    }
+
+    document.getElementById('cnAddTarget').addEventListener('click', () => {
+      const first = document.getElementById('cnTFirst').value.trim();
+      const last = document.getElementById('cnTLast').value.trim();
+      const email = document.getElementById('cnTEmail').value.trim();
+      const dept = document.getElementById('cnTDept').value.trim();
+      if (!email || !email.includes('@')) { alert('Please enter a valid email.'); return; }
+      _campaignTargetsDraft.push({ id: 'tmp_' + Date.now(), first_name: first || 'User', last_name: last, email, department: dept });
+      document.getElementById('cnTFirst').value = '';
+      document.getElementById('cnTLast').value = '';
+      document.getElementById('cnTEmail').value = '';
+      document.getElementById('cnTDept').value = '';
+      renderDraftTargets();
+    });
+
+    document.getElementById('cnParseCsv').addEventListener('click', async () => {
+      const f = document.getElementById('cnCsvFile').files[0];
+      if (!f) { alert('Please select a CSV file.'); return; }
+      const fd = new FormData();
+      fd.append('file', f);
+      // Use a temporary campaign id placeholder – just parse client-side approach via API
+      // We create a minimal temp campaign to import then merge, but simpler: parse via upload endpoint
+      // Actually import_targets_csv is server-side; send a small request to a parse helper
+      // Re-use the upload to a new temp campaign then merge into draft
+      const preview = document.getElementById('cnCsvPreview');
+      preview.textContent = 'Parsing…';
+      try {
+        // Parse CSV client-side
+        const text = await f.text();
+        const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+        if (!lines.length) { preview.textContent = 'CSV is empty.'; return; }
+        const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/['"]/g,''));
+        const emailIdx = headers.indexOf('email');
+        const firstIdx = headers.findIndex(h => h === 'first_name' || h === 'firstname');
+        const lastIdx = headers.findIndex(h => h === 'last_name' || h === 'lastname');
+        const deptIdx = headers.findIndex(h => h === 'department' || h === 'dept');
+        if (emailIdx === -1) { preview.textContent = 'No "email" column found.'; return; }
+        let added = 0;
+        for (let i = 1; i < lines.length; i++) {
+          const cols = lines[i].split(',').map(c => c.trim().replace(/^"|"$/g,''));
+          const email = cols[emailIdx];
+          if (!email || !email.includes('@')) continue;
+          _campaignTargetsDraft.push({
+            id: 'tmp_' + i + '_' + Date.now(),
+            first_name: firstIdx >= 0 ? cols[firstIdx] : 'User',
+            last_name: lastIdx >= 0 ? cols[lastIdx] : '',
+            email,
+            department: deptIdx >= 0 ? cols[deptIdx] : '',
+          });
+          added++;
+        }
+        preview.textContent = `✓ Parsed ${added} target(s) from CSV.`;
+        renderDraftTargets();
+      } catch (e) {
+        preview.textContent = 'Failed to parse CSV.';
+      }
+    });
+
+    function renderDraftTargets() {
+      const el = document.getElementById('cnTargetList');
+      if (!_campaignTargetsDraft.length) { el.innerHTML = ''; return; }
+      el.innerHTML = `<p style="color:var(--muted);margin:0 0 0.4rem;">${_campaignTargetsDraft.length} target(s) added:</p>` +
+        `<table style="width:100%;border-collapse:collapse;font-size:0.82rem;">
+          <thead><tr style="color:var(--muted);text-align:left;"><th style="padding:4px 6px;">Name</th><th>Email</th><th>Dept</th><th></th></tr></thead>
+          <tbody>${_campaignTargetsDraft.map((t, i) => `
+            <tr style="border-top:1px solid var(--border);">
+              <td style="padding:4px 6px;">${escapeHtml(t.first_name)} ${escapeHtml(t.last_name)}</td>
+              <td>${escapeHtml(t.email)}</td>
+              <td>${escapeHtml(t.department || '')}</td>
+              <td><button class="secondary" style="padding:2px 8px;font-size:0.75rem;" onclick="removeDraftTarget(${i})">✕</button></td>
+            </tr>`).join('')}
+          </tbody>
+        </table>`;
+    }
+
+    window.removeDraftTarget = function(i) {
+      _campaignTargetsDraft.splice(i, 1);
+      renderDraftTargets();
+    };
+
+    document.getElementById('cnCreate').addEventListener('click', async () => {
+      const name = document.getElementById('cnName').value.trim();
+      if (!name) { alert('Campaign name is required.'); return; }
+      const templateId = document.getElementById('cnTemplate').value;
+      if (!templateId) { alert('Please select an email template.'); return; }
+      if (!_campaignTargetsDraft.length) { alert('Please add at least one target.'); return; }
+      const scheduled = document.getElementById('cnScheduled').value;
+      const payload = {
+        name,
+        description: document.getElementById('cnDesc').value.trim(),
+        template_id: templateId,
+        landing_page_id: document.getElementById('cnLanding').value,
+        send_from_name: document.getElementById('cnSenderName').value.trim() || 'IT Security Team',
+        send_from_email: document.getElementById('cnSenderEmail').value.trim() || 'security@phishx-training.local',
+        targets: _campaignTargetsDraft.map(t => ({ ...t, id: undefined })),
+        scheduled_at: scheduled ? new Date(scheduled).toISOString() : null,
+      };
+      try {
+        const r = await fetch('/api/campaigns', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+        const c = await r.json();
+        if (scheduled) {
+          // also schedule it
+          await fetch(`/api/campaigns/${c.id}/schedule`, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ scheduled_at: payload.scheduled_at }) });
+        }
+        openCampaign(c.id);
+      } catch (e) {
+        alert('Failed to create campaign.');
+      }
+    });
+
+    // ---- campaign detail ----
+    window.openCampaign = async function(id) {
+      _activeCampaignId = id;
+      showPage('page-campaign-detail');
+      await refreshCampaignDetail(id);
+      // Auto-refresh every 5 s if running
+      if (_cdRefreshTimer) clearInterval(_cdRefreshTimer);
+      _cdRefreshTimer = setInterval(async () => {
+        const c = await fetchCampaign(id);
+        if (!c || c.status === 'completed' || c.status === 'draft') { clearInterval(_cdRefreshTimer); _cdRefreshTimer = null; return; }
+        await refreshCampaignDetail(id, true);
+      }, 5000);
+    };
+
+    async function fetchCampaign(id) {
+      try { const r = await fetch('/api/campaigns/' + id); return r.ok ? r.json() : null; } catch { return null; }
+    }
+
+    async function refreshCampaignDetail(id, silent = false) {
+      const [campaign, stats] = await Promise.all([
+        fetch('/api/campaigns/' + id).then(r => r.json()),
+        fetch('/api/campaigns/' + id + '/stats').then(r => r.json()),
+      ]);
+      document.getElementById('cdTitle').textContent = campaign.name;
+      const badge = document.getElementById('cdStatusBadge');
+      badge.textContent = campaign.status.toUpperCase();
+      badge.setAttribute('style', `padding:4px 12px;border-radius:20px;font-size:0.82rem;font-weight:700;${statusBadgeStyle(campaign.status)}`);
+
+      // Stats grid
+      document.getElementById('cdStatsGrid').innerHTML = [
+        { label: 'Targets', value: stats.total_targets, icon: '👥' },
+        { label: 'Emails sent', value: stats.emails_sent, icon: '📧' },
+        { label: 'Opened', value: `${stats.emails_opened} <span style="color:var(--muted);font-size:0.8rem">(${stats.open_rate_pct}%)</span>`, icon: '📬' },
+        { label: 'Clicked', value: `${stats.links_clicked} <span style="color:var(--muted);font-size:0.8rem">(${stats.click_rate_pct}%)</span>`, icon: '🖱️' },
+        { label: 'Submitted', value: `${stats.data_submitted} <span style="color:#f85149;font-size:0.8rem">(${stats.submit_rate_pct}%)</span>`, icon: '🔑' },
+        { label: 'Reported', value: `${stats.reported} <span style="color:#2ea043;font-size:0.8rem">(${stats.report_rate_pct}%)</span>`, icon: '🚩' },
+      ].map(s => `<div class="card" style="text-align:center;padding:1rem;">
+        <div style="font-size:1.6rem">${s.icon}</div>
+        <div style="font-size:1.5rem;font-weight:700">${s.value}</div>
+        <div style="color:var(--muted);font-size:0.82rem">${s.label}</div>
+      </div>`).join('');
+
+      // Action buttons
+      const actionsEl = document.getElementById('cdActions');
+      let btns = '';
+      if (campaign.status === 'draft' || campaign.status === 'paused') {
+        btns += `<button onclick="doLaunch('${id}')">🚀 Launch now</button>`;
+      }
+      if (campaign.status === 'running') {
+        btns += `<button class="secondary" onclick="doPause('${id}')">⏸ Pause</button>`;
+        btns += `<button class="secondary" onclick="doComplete('${id}')">✅ Mark complete</button>`;
+      }
+      if (campaign.status !== 'completed') {
+        btns += `<label style="display:flex;align-items:center;gap:0.4rem;font-size:0.85rem;"><span>⏰ Schedule:</span><input type="datetime-local" id="cdSchedInput" style="background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:0.4rem;font-size:0.82rem;"/><button class="secondary" onclick="doSchedule('${id}')">Set</button></label>`;
+      }
+      btns += `<button class="secondary" style="color:#f85149;" onclick="doDeleteCampaign('${id}')">🗑 Delete</button>`;
+      actionsEl.innerHTML = btns;
+
+      // Results table
+      const results = campaign.results || [];
+      if (!results.length) {
+        document.getElementById('cdResults').innerHTML = '<p style="color:var(--muted)">No targets yet.</p>';
+      } else {
+        document.getElementById('cdResults').innerHTML = `
+          <table style="width:100%;border-collapse:collapse;font-size:0.82rem;">
+            <thead>
+              <tr style="color:var(--muted);text-align:left;">
+                <th style="padding:6px 8px;">Name</th>
+                <th>Email</th>
+                <th style="text-align:center;">📧 Sent</th>
+                <th style="text-align:center;">📬 Opened</th>
+                <th style="text-align:center;">🖱 Clicked</th>
+                <th style="text-align:center;">🔑 Submitted</th>
+                <th style="text-align:center;">🚩 Reported</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${results.map(r => `
+                <tr style="border-top:1px solid var(--border);">
+                  <td style="padding:5px 8px;">${escapeHtml(r.target_name)}</td>
+                  <td>${escapeHtml(r.target_email)}</td>
+                  <td style="text-align:center;">${r.email_sent ? '✓' : ''}</td>
+                  <td style="text-align:center;">${r.email_opened ? '<span style="color:#d29922">✓</span>' : ''}</td>
+                  <td style="text-align:center;">${r.link_clicked ? '<span style="color:#f0883e">✓</span>' : ''}</td>
+                  <td style="text-align:center;">${r.data_submitted ? '<span style="color:#f85149">✓</span>' : ''}</td>
+                  <td style="text-align:center;">${r.reported ? '<span style="color:#2ea043">✓</span>' : ''}</td>
+                  <td>
+                    <div style="display:flex;gap:4px;flex-wrap:wrap;">
+                      ${!r.email_opened ? `<button class="secondary" style="padding:2px 7px;font-size:0.72rem;" onclick="simulateEvent('${id}','${r.target_id}','email_opened')">Opened</button>` : ''}
+                      ${!r.link_clicked ? `<button class="secondary" style="padding:2px 7px;font-size:0.72rem;" onclick="simulateEvent('${id}','${r.target_id}','link_clicked')">Clicked</button>` : ''}
+                      ${!r.data_submitted ? `<button class="secondary" style="padding:2px 7px;font-size:0.72rem;color:#f85149;" onclick="simulateEvent('${id}','${r.target_id}','data_submitted')">Submitted</button>` : ''}
+                      ${!r.reported ? `<button class="secondary" style="padding:2px 7px;font-size:0.72rem;color:#2ea043;" onclick="simulateEvent('${id}','${r.target_id}','reported')">Reported</button>` : ''}
+                    </div>
+                  </td>
+                </tr>`).join('')}
+            </tbody>
+          </table>`;
+      }
+
+      if (!silent) {
+        const ar = document.getElementById('cdAutoRefresh');
+        if (campaign.status === 'running') ar.textContent = '(auto-refreshing every 5 s)';
+        else { ar.textContent = ''; if (_cdRefreshTimer) { clearInterval(_cdRefreshTimer); _cdRefreshTimer = null; } }
+      }
+    }
+
+    window.simulateEvent = async function(cid, tid, etype) {
+      await fetch(`/api/campaigns/${cid}/event`, {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ target_id: tid, event_type: etype }),
+      });
+      await refreshCampaignDetail(cid, true);
+    };
+
+    window.doLaunch = async function(id) {
+      await fetch('/api/campaigns/' + id + '/launch', { method: 'POST' });
+      await refreshCampaignDetail(id);
+      if (_cdRefreshTimer) clearInterval(_cdRefreshTimer);
+      _cdRefreshTimer = setInterval(() => refreshCampaignDetail(id, true), 5000);
+    };
+
+    window.doPause = async function(id) {
+      await fetch('/api/campaigns/' + id + '/pause', { method: 'POST' });
+      await refreshCampaignDetail(id);
+    };
+
+    window.doComplete = async function(id) {
+      await fetch('/api/campaigns/' + id + '/complete', { method: 'POST' });
+      await refreshCampaignDetail(id);
+    };
+
+    window.doSchedule = async function(id) {
+      const val = document.getElementById('cdSchedInput').value;
+      if (!val) { alert('Please pick a date/time.'); return; }
+      await fetch(`/api/campaigns/${id}/schedule`, {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ scheduled_at: new Date(val).toISOString() }),
+      });
+      await refreshCampaignDetail(id);
+    };
+
+    window.doDeleteCampaign = async function(id) {
+      if (!confirm('Delete this campaign? This cannot be undone.')) return;
+      await fetch('/api/campaigns/' + id, { method: 'DELETE' });
+      showPage('page-campaigns');
+    };
+
+    // init new campaign form when the page is shown
+    document.querySelector('[data-page="campaigns"]').addEventListener('click', () => {
+      if (_cdRefreshTimer) { clearInterval(_cdRefreshTimer); _cdRefreshTimer = null; }
+    });
+
+    // Pre-load template dropdown when navigating to new campaign page
+    const origShowPage = showPage;
+    document.querySelectorAll('[data-page]').forEach(el => {
+      el.addEventListener('click', (e) => {
+        if (e.currentTarget.dataset.page === 'campaigns' && _cdRefreshTimer) {
+          clearInterval(_cdRefreshTimer); _cdRefreshTimer = null;
+        }
+      });
+    });
+
+    // Intercept nav to campaign-new to init form
+    document.body.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[onclick]');
+      if (btn && btn.getAttribute('onclick') === "showPage('page-campaign-new')") {
+        setTimeout(initNewCampaignForm, 50);
+      }
+    });
+
+    // =====================================================================
+
+  </script>
+</body>
+</html>

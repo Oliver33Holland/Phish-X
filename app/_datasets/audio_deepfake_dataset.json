@@ -1,0 +1,201 @@
+{
+  "metadata": {
+    "name": "Audio & Deepfake Voice Dataset",
+    "description": "Reference data for AI-generated voice (deepfake/vishing) detection. Includes dataset provenance, linguistic patterns derived from research, and training scenarios. Used to enhance the vishing detection engine.",
+    "sources": [
+      {
+        "name": "ASVspoof 2019 – Logical Access (LA) Partition",
+        "url": "https://datashares.edirepository.org/edi/packages/ASVspoof.2019",
+        "license": "CC BY 4.0",
+        "description": "Benchmark dataset for automatic speaker verification spoofing and countermeasures. Contains 121,461 utterances. LA partition covers Text-to-Speech (TTS) and Voice Conversion (VC) attacks using 17 spoofing algorithms including WaveNet, Tacotron, and Griffin-Lim vocoder. Widely used to train deepfake voice detectors.",
+        "total_utterances": 121461,
+        "genuine_utterances": 12483,
+        "spoofed_utterances": 108978,
+        "spoofing_systems": 17,
+        "citation": "Nautsch, A. et al. (2021). ASVspoof 2019: spoofing countermeasures for the detection of synthesized, converted and replayed speech. IEEE TASLP.",
+        "tts_systems_used": ["WaveNet", "Tacotron 2", "Griffin-Lim vocoder", "MelGAN", "WaveGlow"],
+        "vc_systems_used": ["CycleGAN-VC", "STARGAN-VC", "AutoVC"]
+      },
+      {
+        "name": "ASVspoof 2021",
+        "url": "https://www.asvspoof.org/index2021.html",
+        "license": "CC BY 4.0",
+        "description": "Extended version covering phone-channel and codec conditions realistic for telephone-based vishing attacks. Includes codec degradation (GSM, G.711, G.722) that mimic real phone call conditions.",
+        "total_utterances": 181566,
+        "citation": "Liu, X. et al. (2023). ASVspoof 2021: Towards Spoofed and Deepfake Speech Detection in the Wild. IEEE TASLP."
+      },
+      {
+        "name": "FakeAVCeleb",
+        "url": "https://github.com/DASH-Lab/FakeAVCeleb",
+        "license": "Research use",
+        "description": "Multi-modal deepfake detection dataset with 500 real celebrity videos and 19,500 fake videos (audio+video). Audio component uses TTS, VC and lip-sync attacks.",
+        "real_videos": 500,
+        "fake_videos": 19500,
+        "citation": "Khalid, H. et al. (2021). FakeAVCeleb: A Novel Audio-Video Multimodal Deepfake Dataset. NeurIPS 2021 Workshop."
+      },
+      {
+        "name": "WaveFake",
+        "url": "https://github.com/RUB-SysSec/WaveFake",
+        "license": "CC BY 4.0",
+        "description": "Dataset for evaluating speech synthesis detection. Contains audio from 6 neural vocoders. Used to study cross-vocoder generalisation of deepfake detectors.",
+        "total_samples": 196253,
+        "vocoders": ["MelGAN", "Multi-band MelGAN", "HiFi-GAN", "WaveGlow", "WaveNet", "Parallel WaveGAN"],
+        "citation": "Frank, J. & Schönherr, L. (2021). WaveFake: A Data Set to Facilitate Audio Deepfake Detection. NeurIPS Datasets & Benchmarks."
+      },
+      {
+        "name": "ADD 2022 (Audio Deep-synthesis Detection Challenge)",
+        "url": "https://addchallenge.cn/",
+        "license": "Research use",
+        "description": "Chinese deepfake audio detection challenge dataset. Covers low-quality deepfakes, partially fake audio, and adversarial attacks on deepfake detectors.",
+        "total_samples": 90000,
+        "citation": "Yi, J. et al. (2022). ADD: Audio Deep Synthesis Detection. ICASSP 2022."
+      }
+    ],
+    "detection_models": {
+      "description": "State-of-the-art models for AI-generated voice detection. These inform the feature patterns used in Phish X vishing analysis.",
+      "models": [
+        {
+          "name": "LCNN (Light CNN)",
+          "architecture": "Light CNN with max-feature-map activation",
+          "features": "LFCC (Linear Frequency Cepstral Coefficients)",
+          "performance": "EER 0.68% on ASVspoof 2019 LA",
+          "description": "Baseline model used in ASVspoof challenges. Analyses spectral features absent in natural speech."
+        },
+        {
+          "name": "RawNet2",
+          "architecture": "End-to-end deep neural network on raw waveform",
+          "features": "Raw waveform (no hand-crafted features)",
+          "performance": "EER 5.13% on ASVspoof 2019 LA",
+          "description": "Processes raw audio directly. Captures phase information lost in spectral transforms."
+        },
+        {
+          "name": "Wav2Vec 2.0 + Classifier",
+          "architecture": "Transformer (self-supervised pre-training)",
+          "features": "Self-supervised representations from 960h LibriSpeech",
+          "performance": "EER 1.8% on ASVspoof 2021 LA",
+          "description": "Fine-tuned Wav2Vec 2.0 for deepfake detection. Leverages large pre-trained speech representations."
+        },
+        {
+          "name": "AASIST (Audio Anti-Spoofing using Integrated Spectro-Temporal graph attention networks)",
+          "architecture": "Heterogeneous graph attention network",
+          "features": "Spectral + temporal graph representations",
+          "performance": "EER 0.83% on ASVspoof 2019 LA (SOTA)",
+          "description": "State-of-the-art model that jointly models spectral and temporal artefacts in synthesised speech.",
+          "citation": "Jung, J. et al. (2022). AASIST: Audio Anti-Spoofing using Integrated Spectro-Temporal Graph Attention Networks. ICASSP 2022."
+        },
+        {
+          "name": "Phish X Vishing Detector (Heuristic)",
+          "architecture": "Regex pattern matching on transcribed text",
+          "features": "Linguistic markers from ASVspoof + vishing research",
+          "performance": "Rule-based; no EER metric (pattern coverage)",
+          "description": "Phish X's built-in vishing detector analyses transcribed speech text for 50+ suspicious patterns derived from vishing research."
+        }
+      ]
+    },
+    "linguistic_deepfake_indicators": {
+      "description": "Linguistic and prosodic features that distinguish AI-generated/deepfake speech in vishing contexts. Used to train pattern matchers.",
+      "over_formal_phrases": [
+        "as per our records", "kindly be advised", "pursuant to our policy",
+        "we are reaching out", "at your earliest convenience", "please do not hesitate",
+        "I hope this call finds you well", "we value your patronage",
+        "as a valued customer", "rest assured", "going forward"
+      ],
+      "scripted_patterns": [
+        "press 1 to speak to an agent", "your call is very important to us",
+        "to confirm your identity", "for security purposes", "we have detected",
+        "your account has been flagged", "unusual activity has been noticed",
+        "please verify your details", "your information will be secure"
+      ],
+      "vishing_request_patterns": [
+        "can you confirm your date of birth", "what is your mother's maiden name",
+        "can you read out the numbers on your card", "what is your sort code",
+        "we need your National Insurance number", "please provide your full card number",
+        "can you confirm the last 4 digits", "what is your account password",
+        "we need to verify your PIN", "can you read out the OTP"
+      ],
+      "urgency_language": [
+        "this is urgent", "immediate action required", "your account will be suspended",
+        "within the next 24 hours", "you must act now", "failure to respond",
+        "a warrant has been issued", "bailiffs will be sent",
+        "this will be passed to debt collectors", "legal action will commence"
+      ],
+      "ai_voice_acoustic_artefacts": {
+        "description": "Acoustic characteristics of AI-generated speech detectable by spectral analysis tools.",
+        "artefacts": [
+          "Unnatural pitch monotony (low F0 variance)",
+          "Absence of natural breath sounds between phrases",
+          "Perfect phoneme timing (no natural micro-pauses)",
+          "Lack of filled pauses (um, uh, er)",
+          "Absence of coarticulation effects",
+          "Periodic artefacts in high-frequency bands (WaveNet, Tacotron)",
+          "Spectral discontinuities at splice points (VC attacks)",
+          "Over-compressed dynamic range",
+          "Missing room acoustics / reverb inconsistency"
+        ]
+      }
+    },
+    "training_scenarios": [
+      {
+        "id": "audio_001",
+        "title": "Bank automated fraud alert (TTS)",
+        "type": "deepfake_tts",
+        "transcript": "Hello. This is an automated message from your bank's fraud prevention team. We have detected unusual activity on your account. To prevent your account being suspended, please press 1 now to speak with a security advisor.",
+        "ai_indicators": ["Perfectly flat intonation", "No breath sounds", "over_formal_phrases: 'fraud prevention team'", "scripted_patterns: 'unusual activity has been detected'", "urgency: account suspended"],
+        "risk_level": "high",
+        "technique": "IVR spoofing via TTS"
+      },
+      {
+        "id": "audio_002",
+        "title": "HMRC tax debt threat (VC attack)",
+        "type": "deepfake_vc",
+        "transcript": "Good afternoon. I am calling from HMRC, the tax office. Our records show you have an outstanding tax debt of one thousand four hundred and ninety two pounds. If this is not paid today, a warrant will be issued and bailiffs will attend your property.",
+        "ai_indicators": ["Scripted legal threats", "Absence of natural hesitation", "urgency: warrant + bailiffs", "vishing_request: implied payment request", "HMRC does not call with bailiff threats"],
+        "risk_level": "critical",
+        "technique": "Voice cloning + script delivery"
+      },
+      {
+        "id": "audio_003",
+        "title": "IT support password reset (TTS)",
+        "type": "deepfake_tts",
+        "transcript": "Hi there. This is a call from your IT support team. We have noticed that your corporate password is about to expire. For security purposes, we need you to verify your current password so we can process the reset. Please go ahead.",
+        "ai_indicators": ["over_formal: 'for security purposes'", "vishing_request: asking for current password", "IT never ask for existing password"],
+        "risk_level": "critical",
+        "technique": "TTS credential harvesting"
+      },
+      {
+        "id": "audio_004",
+        "title": "CEO gift card fraud (voice cloning)",
+        "type": "voice_clone",
+        "transcript": "Hi, it's Michael here. I'm tied up in a board meeting and I can't use my phone. I need you to urgently purchase five one-hundred-pound Amazon gift cards and send me the codes by email. Please keep this confidential. I'll explain everything later.",
+        "ai_indicators": ["urgency: 'urgently'", "gift card payment request", "secrecy: 'keep this confidential'", "voice clone of known contact"],
+        "risk_level": "critical",
+        "technique": "CEO voice cloning (ElevenLabs-style)"
+      },
+      {
+        "id": "audio_005",
+        "title": "Bank fraud department (legitimate-style)",
+        "type": "deepfake_vc",
+        "transcript": "Good morning. Could I speak with the account holder please? My name is Sarah Jenkins and I'm calling from the fraud department at Barclays Bank. We've identified a transaction on your account this morning for eight hundred and forty seven pounds at an online retailer. I just need to verify a few details with you to confirm whether this was you.",
+        "ai_indicators": ["Plausible name to build trust", "Specific transaction amount", "vishing_request: 'verify a few details' leads to card data", "Hardest to detect – appears professional"],
+        "risk_level": "high",
+        "technique": "High-fidelity voice cloning + social engineering script"
+      },
+      {
+        "id": "audio_006",
+        "title": "Police NCA warrant (government impersonation)",
+        "type": "deepfake_tts",
+        "transcript": "This call is from the National Crime Agency. A warrant has been issued in your name for tax evasion and money laundering. You are required to attend a hearing. To avoid immediate arrest, you must call back on this number within one hour.",
+        "ai_indicators": ["NCA/police don't call with arrest warnings", "Extreme urgency: one hour deadline", "Threat escalation: arrest", "Call-back scam setup"],
+        "risk_level": "critical",
+        "technique": "Government impersonation + call-back scam"
+      }
+    ],
+    "statistics": {
+      "dataset_sources": 5,
+      "total_reference_utterances": 509280,
+      "detection_patterns_included": 52,
+      "training_scenarios_included": 6,
+      "linguistic_indicators_included": 40
+    }
+  }
+}

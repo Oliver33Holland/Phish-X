@@ -1,0 +1,16 @@
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+pydantic>=2.0.0
+python-multipart>=0.0.9
+
+# ML models – email phishing detection (TF-IDF + Naive Bayes + Random Forest)
+scikit-learn>=1.4.0
+joblib>=1.3.0
+numpy>=1.26.0
+
+# Voice analyzer – speech to text (optional, needed for voice analysis feature)
+SpeechRecognition>=3.10.0
+pydub>=0.25.0
+
+# Audio deepfake detection – MFCC / spectral feature extraction (optional)
+librosa>=0.10.0

@@ -1,0 +1,50 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.eggs/
+dist/
+build/
+*.spec
+
+# PyInstaller output
+*.exe
+*.pkg
+phishx_browser.py
+phishx_desktop.py
+phishx.py
+build_desktop.cmd
+run_desktop.cmd
+run_desktop_browser.cmd
+run_app.cmd
+run.cmd
+run.ps1
+
+# Data files generated at runtime (campaigns, analytics etc.)
+# Keep the folder structure but not the data
+data/*.json
+
+# IDE
+.vscode/
+.idea/
+*.code-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+phishx_error.log
+
+# Distribution zip
+*.zip
+
+# Dev scripts
+test_models.py
+
+# Trained model cache (regenerated automatically)
+models/*.joblib

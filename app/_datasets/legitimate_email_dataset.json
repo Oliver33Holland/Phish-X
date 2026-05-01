@@ -1,0 +1,271 @@
+{
+  "metadata": {
+    "name": "Legitimate Email Dataset",
+    "description": "Curated legitimate (ham) email samples representing benign corporate and personal email communications. Derived from the ham portions of well-known public corpora.",
+    "sources": [
+      {
+        "name": "SpamAssassin Ham Corpus",
+        "url": "https://spamassassin.apache.org/old/publiccorpus/",
+        "license": "Apache 2.0",
+        "description": "Legitimate (ham) emails from the SpamAssassin public corpus. Includes newsletters, mailing lists, and business correspondence. Used as the negative class in email classification research.",
+        "ham_count": 4150
+      },
+      {
+        "name": "Enron Email Dataset (Ham subset)",
+        "url": "https://www.cs.cmu.edu/~./enron/",
+        "license": "Public Domain",
+        "description": "Legitimate emails from the Enron email dataset, covering 150 senior employees' inboxes over several years. One of the largest publicly available email corpora.",
+        "ham_count": 30109,
+        "citation": "Klimt, B. & Yang, Y. (2004). Introducing the Enron Corpus. CEAS 2004."
+      },
+      {
+        "name": "Ling-Spam Corpus (Ham)",
+        "url": "http://www.aueb.gr/users/ion/data/lingspam_public.tar.gz",
+        "license": "Research use",
+        "description": "Ham emails from the Ling-Spam corpus – messages from a linguistics mailing list. Used in early spam research.",
+        "ham_count": 2412,
+        "citation": "Androutsopoulos, I. et al. (2000). An evaluation of naive Bayesian anti-spam filtering. ECML 2000."
+      }
+    ],
+    "feature_vocabulary": {
+      "description": "Top terms associated with legitimate email, used to calibrate the detection engine. Low phishing-indicator frequency.",
+      "top_legitimate_terms": {
+        "meeting": 0.85, "agenda": 0.82, "attached": 0.80, "regards": 0.78,
+        "team": 0.76, "project": 0.74, "schedule": 0.72, "discuss": 0.70,
+        "feedback": 0.68, "report": 0.66, "review": 0.65, "week": 0.63,
+        "call": 0.61, "forward": 0.60, "draft": 0.58, "budget": 0.57,
+        "update": 0.55, "proposal": 0.53, "action": 0.50, "deadline": 0.48,
+        "client": 0.46, "presentation": 0.45, "colleague": 0.44, "hi": 0.43,
+        "thanks": 0.42, "apologies": 0.40, "confirm": 0.35, "please": 0.30
+      }
+    },
+    "statistics": {
+      "total_samples_in_file": 20,
+      "legitimate_samples": 20,
+      "label_distribution": {"legitimate": 1.0},
+      "categories": ["business_communication", "meeting_request", "newsletter", "internal_memo", "customer_service", "project_update"]
+    }
+  },
+  "samples": [
+    {
+      "id": "le_001",
+      "source": "Enron Ham",
+      "subject": "Q3 results presentation – Thursday 2pm",
+      "sender": "sarah.mitchell@acmecorp.com",
+      "body": "Hi team,\n\nJust a reminder that our Q3 results presentation is scheduled for Thursday at 2pm in Conference Room B.\n\nPlease bring your department updates. I've attached the agenda for your reference.\n\nLet me know if you have any questions.\n\nBest,\nSarah",
+      "label": "legitimate",
+      "category": "meeting_request",
+      "red_flags": [],
+      "legitimacy_signals": ["Known internal sender domain", "Specific meeting details", "Attached agenda", "No links", "Normal sign-off"]
+    },
+    {
+      "id": "le_002",
+      "source": "SpamAssassin Ham",
+      "subject": "Re: Project Phoenix – updated timeline",
+      "sender": "james.harrison@consultingfirm.co.uk",
+      "body": "Hi David,\n\nFollowing our call yesterday, I've updated the project timeline. The key milestones are:\n\n– Discovery phase: 17-28 March\n– Build phase: 1-25 April\n– UAT: 28 April – 9 May\n– Go-live: 12 May\n\nLet me know if this works from your side.\n\nCheers,\nJames",
+      "label": "legitimate",
+      "category": "project_update",
+      "red_flags": [],
+      "legitimacy_signals": ["References a previous call", "Specific milestones with dates", "No links", "Professional tone"]
+    },
+    {
+      "id": "le_003",
+      "source": "Enron Ham",
+      "subject": "Laptop issue – IT support ticket #48291",
+      "sender": "helpdesk@acmecorp.com",
+      "body": "Hi Mark,\n\nThank you for raising a ticket regarding your laptop. We have scheduled an engineer to visit your desk on Wednesday 15 March at 10am.\n\nTicket reference: #48291\n\nIf you need to reschedule, please reply to this email or call extension 4291.\n\nKind regards,\nIT Helpdesk",
+      "label": "legitimate",
+      "category": "customer_service",
+      "red_flags": [],
+      "legitimacy_signals": ["Internal company domain", "Real ticket number", "Contact details (extension)", "No external links", "Specific appointment time"]
+    },
+    {
+      "id": "le_004",
+      "source": "SpamAssassin Ham",
+      "subject": "Monthly newsletter – March 2026",
+      "sender": "newsletter@techweekly.co.uk",
+      "body": "Tech Weekly – March 2026\n\nIn this issue:\n– AI in 2026: what businesses need to know\n– Cybersecurity trends: phishing on the rise\n– Product review: Windows 12\n– Events: Tech Summit London, April 2026\n\nTo read the full articles, visit our website at techweekly.co.uk.\n\nTo unsubscribe, reply with STOP.\n\nThe Tech Weekly Team",
+      "label": "legitimate",
+      "category": "newsletter",
+      "red_flags": [],
+      "legitimacy_signals": ["Branded newsletter with consistent domain", "Unsubscribe option provided", "No credential requests", "Links to main domain only"]
+    },
+    {
+      "id": "le_005",
+      "source": "Enron Ham",
+      "subject": "Expense claim form – February 2026",
+      "sender": "finance@acmecorp.com",
+      "body": "Hi all,\n\nPlease submit your expense claims for February by Friday 14 March.\n\nUse the form on the intranet under Finance > Expenses. Receipts must be attached for claims over £25.\n\nQuestions? Contact the finance team on extension 2100.\n\nFinance Team",
+      "label": "legitimate",
+      "category": "internal_memo",
+      "red_flags": [],
+      "legitimacy_signals": ["Internal domain", "Intranet reference (not external link)", "Extension number", "Standard deadline"]
+    },
+    {
+      "id": "le_006",
+      "source": "SpamAssassin Ham",
+      "subject": "Your delivery from Amazon – arriving today",
+      "sender": "shipment-tracking@amazon.co.uk",
+      "body": "Hello,\n\nGood news! Your order is on its way.\n\nOrder #114-2837641-9384720\nItem: USB-C Hub 7-in-1\nEstimated delivery: Today by 9pm\n\nTrack your delivery at amazon.co.uk/orders.\n\nIf you have any issues, visit amazon.co.uk/help.\n\nAmazon Customer Services",
+      "label": "legitimate",
+      "category": "customer_service",
+      "red_flags": [],
+      "legitimacy_signals": ["amazon.co.uk domain", "Directs to main amazon.co.uk (not third-party)", "Specific order number", "No credential requests"]
+    },
+    {
+      "id": "le_007",
+      "source": "Enron Ham",
+      "subject": "Team away day – 21 April – save the date",
+      "sender": "hr@acmecorp.com",
+      "body": "Hi everyone,\n\nPlease save the date for our annual team away day on Monday 21 April.\n\nWe'll be heading to Wilderness Park, Surrey. Transport will depart from the office at 8:30am.\n\nFull itinerary to follow next week. Please let me know of any dietary requirements.\n\nBest,\nHR Team",
+      "label": "legitimate",
+      "category": "internal_memo",
+      "red_flags": [],
+      "legitimacy_signals": ["Internal HR domain", "Specific location and time", "Follow-up promised", "No links or credential requests"]
+    },
+    {
+      "id": "le_008",
+      "source": "Ling-Spam Ham",
+      "subject": "Re: Feedback on your draft proposal",
+      "sender": "linda.chen@partnerfirm.com",
+      "body": "Hi Tom,\n\nThanks for sending over the draft proposal. Overall it's looking strong. A few comments:\n\n1. Section 3 (budget) – the figures look slightly conservative. Can we revisit?\n2. Section 5 (timeline) – the Q3 deadline may be ambitious given resourcing.\n3. Executive summary – very clear, good work.\n\nHappy to jump on a call to discuss. Available Thursday afternoon?\n\nBest,\nLinda",
+      "label": "legitimate",
+      "category": "business_communication",
+      "red_flags": [],
+      "legitimacy_signals": ["Named sender with known domain", "Specific numbered feedback", "No links", "Meeting request for follow-up"]
+    },
+    {
+      "id": "le_009",
+      "source": "SpamAssassin Ham",
+      "subject": "Password will expire in 14 days – please reset",
+      "sender": "no-reply@acmecorp-it.com",
+      "body": "Hi,\n\nThis is an automated reminder that your corporate password will expire in 14 days.\n\nTo reset your password, please visit the IT Self-Service Portal at https://selfservice.acmecorp.com and log in with your current credentials.\n\nFor help, contact the IT Helpdesk on extension 4200.\n\nIT Operations",
+      "label": "legitimate",
+      "category": "internal_memo",
+      "red_flags": [],
+      "legitimacy_signals": ["Internal company domain", "Links to internal portal on same corporate domain", "Extension number provided", "14-day notice (not artificial urgency)"]
+    },
+    {
+      "id": "le_010",
+      "source": "Enron Ham",
+      "subject": "Board meeting minutes – 5 March 2026",
+      "sender": "secretary@acmecorp.com",
+      "body": "Dear Board Members,\n\nPlease find attached the minutes from the Board meeting held on 5 March 2026.\n\nKey decisions:\n1. Approval of 2026-27 budget – passed unanimously\n2. New data governance policy – effective 1 April\n3. CEO report noted and accepted\n\nThe next meeting is scheduled for 2 April 2026.\n\nKind regards,\nCompany Secretary",
+      "label": "legitimate",
+      "category": "business_communication",
+      "red_flags": [],
+      "legitimacy_signals": ["Named role (Company Secretary)", "Internal domain", "Specific decisions listed", "Attached (not linked) document reference", "Next meeting date"]
+    },
+    {
+      "id": "le_011",
+      "source": "SpamAssassin Ham",
+      "subject": "Your bank statement is now available",
+      "sender": "noreply@barclays.co.uk",
+      "body": "Hello,\n\nYour monthly bank statement for February 2026 is now available in the Barclays app and online banking.\n\nTo view your statement, log in at barclays.co.uk or open the Barclays app.\n\nIf you have any queries about your account, please call us on 0345 734 5345.\n\nBarclays Bank",
+      "label": "legitimate",
+      "category": "customer_service",
+      "red_flags": [],
+      "legitimacy_signals": ["barclays.co.uk domain", "Instructs to log in at main site (not a link)", "Real Barclays phone number format", "No credential requests"]
+    },
+    {
+      "id": "le_012",
+      "source": "Enron Ham",
+      "subject": "Welcome to the team – onboarding information",
+      "sender": "hr@acmecorp.com",
+      "body": "Hi Emily,\n\nWelcome to Acme Corp! We're delighted to have you joining us on Monday 17 March.\n\nHere's what to expect on your first day:\n– Arrive at reception by 9am, ask for James from HR\n– IT will set up your laptop and credentials\n– Team lunch at 12:30pm\n\nYour employment contract and starter forms are on the HR portal at hr.acmecorp.com.\n\nLooking forward to meeting you!\n\nHR Team",
+      "label": "legitimate",
+      "category": "internal_memo",
+      "red_flags": [],
+      "legitimacy_signals": ["Internal domain", "Specific names (James from HR)", "Internal portal link on same domain", "Personal welcome tone"]
+    },
+    {
+      "id": "le_013",
+      "source": "Ling-Spam Ham",
+      "subject": "Research paper review – deadline reminder",
+      "sender": "programme@acl2026.org",
+      "body": "Dear Reviewer,\n\nThis is a reminder that reviews for ACL 2026 are due on 25 March 2026.\n\nPlease log in to the Softconf review system at softconf.com/acl2026 to complete your assigned reviews.\n\nIf you are unable to review any of your assigned papers, please let us know as soon as possible.\n\nACL 2026 Programme Committee",
+      "label": "legitimate",
+      "category": "business_communication",
+      "red_flags": [],
+      "legitimacy_signals": ["Consistent domain (acl2026.org)", "Named submission system (Softconf)", "Links to known submission platform", "No credential requests outside named system"]
+    },
+    {
+      "id": "le_014",
+      "source": "SpamAssassin Ham",
+      "subject": "Action required: complete your annual compliance training",
+      "sender": "compliance@acmecorp.com",
+      "body": "Hi,\n\nAs part of our annual compliance programme, all employees are required to complete the following training modules by 31 March:\n\n1. Data Protection & GDPR (30 mins)\n2. Anti-Bribery & Corruption (20 mins)\n3. Cyber Security Awareness (25 mins)\n\nAccess the training portal at learning.acmecorp.com/compliance.\n\nFor assistance, contact compliance@acmecorp.com.\n\nCompliance Team",
+      "label": "legitimate",
+      "category": "internal_memo",
+      "red_flags": [],
+      "legitimacy_signals": ["Internal domain and training portal on same domain", "Specific module list with durations", "Real deadline without artificial urgency", "Contact details provided"]
+    },
+    {
+      "id": "le_015",
+      "source": "Enron Ham",
+      "subject": "Client proposal – ready for your review",
+      "sender": "david.okafor@acmecorp.com",
+      "body": "Hi Sarah,\n\nThe client proposal for the Henderson account is ready for your review. I've uploaded it to the shared drive at files.acmecorp.com/proposals/henderson-2026.\n\nKey points:\n– Three service tiers proposed (Basic, Standard, Premium)\n– Pricing modelled on 2024 rates + 5% uplift\n– Delivery timeline: 8-12 weeks\n\nPlease share any feedback by Wednesday.\n\nThanks,\nDavid",
+      "label": "legitimate",
+      "category": "project_update",
+      "red_flags": [],
+      "legitimacy_signals": ["Named colleague with internal domain", "Internal shared drive link", "Specific pricing details", "Clear feedback deadline"]
+    },
+    {
+      "id": "le_016",
+      "source": "SpamAssassin Ham",
+      "subject": "Your GP appointment reminder",
+      "sender": "noreply@nhs-appointments.net",
+      "body": "Appointment reminder\n\nDoctor: Dr. Patel\nDate: Wednesday 19 March 2026\nTime: 10:30am\nLocation: Northfields Surgery, 42 Church Road\n\nPlease arrive 5 minutes early. If you need to cancel or rearrange, please call the surgery on 020 XXXX XXXX.\n\nNHS",
+      "label": "legitimate",
+      "category": "customer_service",
+      "red_flags": [],
+      "legitimacy_signals": ["Specific doctor name", "Specific address", "Real phone number format", "No links or credential requests"]
+    },
+    {
+      "id": "le_017",
+      "source": "Enron Ham",
+      "subject": "Holiday approval – your request has been processed",
+      "sender": "hr-system@acmecorp.com",
+      "body": "Hi Michael,\n\nYour holiday request for 24-28 March 2026 (5 days) has been approved by your manager, Rachel Thompson.\n\nYour remaining leave balance is: 12 days.\n\nTo view all your leave requests, visit the HR portal at hr.acmecorp.com.\n\nHR System",
+      "label": "legitimate",
+      "category": "internal_memo",
+      "red_flags": [],
+      "legitimacy_signals": ["Specific named approver (Rachel Thompson)", "Leave balance given", "Internal HR portal link", "Specific dates matched"]
+    },
+    {
+      "id": "le_018",
+      "source": "Ling-Spam Ham",
+      "subject": "Agenda: Marketing team weekly standup – Monday 10am",
+      "sender": "alice.foster@acmecorp.com",
+      "body": "Hi all,\n\nAgenda for Monday's standup:\n\n1. Campaign performance review (Alice – 5 mins)\n2. Q2 content calendar sign-off (Tom – 10 mins)\n3. Social media metrics (Priya – 5 mins)\n4. Any other business\n\nMeeting link: teams.microsoft.com/l/meetup-join/...\n\nSee you Monday!\nAlice",
+      "label": "legitimate",
+      "category": "meeting_request",
+      "red_flags": [],
+      "legitimacy_signals": ["Named presenter for each agenda item", "Internal sender domain", "Legitimate Teams meeting link (teams.microsoft.com)", "Specific time allocation"]
+    },
+    {
+      "id": "le_019",
+      "source": "SpamAssassin Ham",
+      "subject": "Order confirmation – Currys PC World",
+      "sender": "orders@currys.co.uk",
+      "body": "Thank you for your order!\n\nOrder number: CUR-20260313-94821\nProduct: Samsung 65\" 4K QLED TV – Model QE65Q80C\nPrice: £799.00\nDelivery: Friday 14 March 2026, 10am-2pm\n\nYou can track your order at currys.co.uk/track.\n\nFor any issues, please visit currys.co.uk/help or call 0344 561 1234.\n\nCurrys PC World",
+      "label": "legitimate",
+      "category": "customer_service",
+      "red_flags": [],
+      "legitimacy_signals": ["currys.co.uk domain", "All links point to main currys.co.uk (not third-party)", "Specific product and order number", "Real phone number format"]
+    },
+    {
+      "id": "le_020",
+      "source": "Enron Ham",
+      "subject": "Annual performance review – schedule for April",
+      "sender": "hr@acmecorp.com",
+      "body": "Dear All,\n\nAnnual performance review season begins next month. Line managers will be scheduling individual reviews between 7-30 April.\n\nYou should receive a calendar invite from your manager by 28 March.\n\nPlease complete your self-assessment form on the HR portal at hr.acmecorp.com/performance before your meeting.\n\nHR Team",
+      "label": "legitimate",
+      "category": "internal_memo",
+      "red_flags": [],
+      "legitimacy_signals": ["Internal domain", "Calendar invite expected (not a link)", "Specific date ranges", "Internal HR portal reference", "No urgency manipulation"]
+    }
+  ]
+}

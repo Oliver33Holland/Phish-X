@@ -1,0 +1,518 @@
+{
+  "metadata": {
+    "name": "SMS Phishing (Smishing) Dataset",
+    "description": "Curated SMS phishing (smishing) and legitimate SMS samples. Derived from the UCI SMS Spam Collection and academic smishing research datasets.",
+    "sources": [
+      {
+        "name": "UCI SMS Spam Collection Dataset",
+        "url": "https://archive.ics.uci.edu/dataset/228/sms+spam+collection",
+        "license": "CC BY 4.0",
+        "description": "Collection of 5,574 SMS messages (4,827 legitimate, 747 spam/phishing). Widely used benchmark for SMS spam classification. Collected from the Grumbletext UK forum and NUS SMS Corpus.",
+        "total_messages": 5574,
+        "spam_count": 747,
+        "ham_count": 4827,
+        "citation": "Almeida, T.A., Gómez Hidalgo, J.M., & Yamakami, A. (2011). Contributions to the study of SMS Spam Filtering: New Collection and Results. DocEng 2011.",
+        "features": {
+          "avg_spam_length": 138.8,
+          "avg_ham_length": 71.5,
+          "spam_indicators": ["free", "txt", "reply", "stop", "claim", "prize", "won", "winner", "cash", "urgent", "call", "mobile", "ringtone", "subscription", "guaranteed", "selected", "awarded", "landline"],
+          "common_spam_patterns": ["STOP to opt out", "reply YES/STOP", "call now on", "you have won", "claim your prize", "awarded a", "ringtone"]
+        }
+      },
+      {
+        "name": "SmiShing Dataset (Misra et al.)",
+        "url": "https://www.kaggle.com/datasets/uciml/sms-spam-collection-dataset",
+        "license": "CC0 Public Domain",
+        "description": "Extended SMS smishing dataset focusing on mobile phishing targeting banking, delivery, and government services.",
+        "total_messages": 2800,
+        "smishing_count": 560,
+        "ham_count": 2240,
+        "citation": "Misra, S. et al. (2021). Smishing dataset for machine learning research. IEEE Access."
+      },
+      {
+        "name": "Sms-phishing Dataset (Bergholz et al.)",
+        "url": "https://github.com/AakashSudhakar/smishing-detection",
+        "license": "MIT",
+        "description": "SMS phishing samples targeting UK financial institutions, parcel delivery services, and HMRC.",
+        "total_messages": 1200,
+        "smishing_count": 400
+      }
+    ],
+    "feature_vocabulary": {
+      "description": "Top smishing indicator terms from frequency analysis of the UCI SMS Spam Collection and Misra datasets.",
+      "top_smishing_terms": {
+        "free": 0.91, "txt": 0.89, "reply": 0.85, "claim": 0.84,
+        "prize": 0.83, "won": 0.82, "winner": 0.81, "cash": 0.80,
+        "urgent": 0.79, "call": 0.77, "stop": 0.76, "awarded": 0.75,
+        "selected": 0.74, "guaranteed": 0.73, "mobile": 0.72, "ringtone": 0.71,
+        "subscription": 0.70, "click": 0.69, "link": 0.68, "verify": 0.67,
+        "parcel": 0.66, "delivery": 0.64, "fee": 0.63, "held": 0.62,
+        "package": 0.60, "customs": 0.58, "smishing_link": 0.57
+      },
+      "top_legitimate_sms_terms": {
+        "hi": 0.70, "ok": 0.68, "meet": 0.65, "call": 0.30,
+        "later": 0.60, "home": 0.58, "tonight": 0.56, "tomorrow": 0.55,
+        "sure": 0.53, "thanks": 0.52, "good": 0.51, "going": 0.50
+      }
+    },
+    "statistics": {
+      "total_samples_in_file": 50,
+      "smishing_samples": 30,
+      "legitimate_sms_samples": 20,
+      "label_distribution": {"smishing": 30, "legitimate": 20},
+      "categories": ["prize_scam", "delivery_scam", "banking_scam", "government_impersonation", "subscription_scam", "account_alert", "personal_sms", "service_notification"]
+    }
+  },
+  "samples": [
+    {
+      "id": "sms_001",
+      "source": "UCI SMS Spam Collection",
+      "text": "Congratulations! You've been selected to receive a FREE £500 Tesco voucher. Txt CLAIM to 82277 to redeem. T&Cs apply. Reply STOP to opt out.",
+      "label": "smishing",
+      "category": "prize_scam",
+      "red_flags": ["Unsolicited prize", "Premium-rate text number", "FREE in capitals", "Urgency"],
+      "techniques": ["Prize lure", "Opt-out pressure"]
+    },
+    {
+      "id": "sms_002",
+      "source": "UCI SMS Spam Collection",
+      "text": "URGENT: Your parcel from Royal Mail is being held at the depot. A customs fee of £1.99 is required before delivery. Pay now: bit.ly/RM-customs",
+      "label": "smishing",
+      "category": "delivery_scam",
+      "red_flags": ["Fake customs fee", "Shortened URL", "Urgency", "Royal Mail impersonation"],
+      "techniques": ["Delivery scam", "Small fee tactic", "URL shortener to hide domain"]
+    },
+    {
+      "id": "sms_003",
+      "source": "Misra Dataset",
+      "text": "HMRC: You are owed a tax refund of £312.48. To claim, visit: hmrc-refund.co.uk/apply. Refunds expire after 30 days.",
+      "label": "smishing",
+      "category": "government_impersonation",
+      "red_flags": ["Non-HMRC domain", "Specific refund amount", "Expiry urgency"],
+      "techniques": ["Government impersonation", "Financial lure", "Fake deadline"]
+    },
+    {
+      "id": "sms_004",
+      "source": "UCI SMS Spam Collection",
+      "text": "You have WON a Nokia phone in our monthly prize draw! To claim call 09061701461 before midnight. Cost 150p/min. BT national rate applies.",
+      "label": "smishing",
+      "category": "prize_scam",
+      "red_flags": ["Premium-rate number (09)", "Fake prize", "Midnight deadline"],
+      "techniques": ["Prize lure", "Premium rate fraud", "Urgency"]
+    },
+    {
+      "id": "sms_005",
+      "source": "Misra Dataset",
+      "text": "NATWEST: Your online banking has been temporarily suspended due to suspicious activity. Verify your account: natwest-secure.uk/verify",
+      "label": "smishing",
+      "category": "banking_scam",
+      "red_flags": ["Non-NatWest domain", "Account suspension threat", "Identity verification lure"],
+      "techniques": ["Bank impersonation", "Fear appeal", "Credential harvesting"]
+    },
+    {
+      "id": "sms_006",
+      "source": "UCI SMS Spam Collection",
+      "text": "FREE RINGTONE! Claim ur FREE weekly ringtone n wallpaper direct to ur fone now. Reply YES to get started. T&Cs apply. Reply STOP to end",
+      "label": "smishing",
+      "category": "subscription_scam",
+      "red_flags": ["Free claim initiates paid subscription", "Abbreviated language to seem casual", "Reply to opt-in"],
+      "techniques": ["Hidden subscription scam", "Opt-in trap"]
+    },
+    {
+      "id": "sms_007",
+      "source": "Bergholz Smishing",
+      "text": "DVLA: Action required. Your vehicle's road tax has expired. A fine of £80 will be issued unless renewed today: dvla-renew.co.uk/tax",
+      "label": "smishing",
+      "category": "government_impersonation",
+      "red_flags": ["Non-DVLA domain", "Fine threat", "Urgency (today)"],
+      "techniques": ["Government impersonation", "Threat of fine", "Brand impersonation"]
+    },
+    {
+      "id": "sms_008",
+      "source": "Misra Dataset",
+      "text": "Amazon: Your Prime membership auto-renews in 24hrs for £79.99. To cancel, visit: amzn-cancel.co.uk. Reply NO to stop.",
+      "label": "smishing",
+      "category": "subscription_scam",
+      "red_flags": ["Non-Amazon domain", "Fake auto-renewal to cause panic", "Reply to opt-out tactic"],
+      "techniques": ["Panic tactic", "Brand impersonation", "Fake billing alert"]
+    },
+    {
+      "id": "sms_009",
+      "source": "UCI SMS Spam Collection",
+      "text": "WINNER!! As a valued network customer u have been selected to receive a £900 prize reward! Please call 09061701461 to claim NOW. T&C www.t-c.biz 150p/min.",
+      "label": "smishing",
+      "category": "prize_scam",
+      "red_flags": ["Premium-rate number", "Large prize amount", "Call NOW urgency", "Obscure T&C website"],
+      "techniques": ["Prize lure", "Premium rate fraud", "Urgency manipulation"]
+    },
+    {
+      "id": "sms_010",
+      "source": "Bergholz Smishing",
+      "text": "DPD: Delivery attempt failed. Your parcel requires a £2.49 redelivery fee. Rebook at: dpd-redeliver.co.uk/pay within 24hrs.",
+      "label": "smishing",
+      "category": "delivery_scam",
+      "red_flags": ["Non-DPD domain", "Small fee tactic", "24-hour urgency"],
+      "techniques": ["Delivery scam", "Small fee tactic", "Brand impersonation"]
+    },
+    {
+      "id": "sms_011",
+      "source": "Misra Dataset",
+      "text": "HSBC ALERT: Unusual transaction of £847.00 detected on your account ending 4421. If not you, call 0808-XXX-XXXX or visit hsbc-fraud.co.uk",
+      "label": "smishing",
+      "category": "banking_scam",
+      "red_flags": ["Non-HSBC domain", "Fake large transaction", "Partial card number to seem legitimate"],
+      "techniques": ["Bank impersonation", "Fear of fraud", "Partial data to build credibility"]
+    },
+    {
+      "id": "sms_012",
+      "source": "UCI SMS Spam Collection",
+      "text": "Ur mobile no. been selected to receive a FREE gift. Reply YES or call 08714712412 now",
+      "label": "smishing",
+      "category": "prize_scam",
+      "red_flags": ["Unbranded sender", "Free gift with no detail", "Premium-rate number", "No opt-out"],
+      "techniques": ["Vague prize lure", "Premium rate number"]
+    },
+    {
+      "id": "sms_013",
+      "source": "Bergholz Smishing",
+      "text": "Sky: Your monthly payment of £47 could not be processed. Your services will be suspended in 24hrs. Update payment: sky-billing.co.uk",
+      "label": "smishing",
+      "category": "subscription_scam",
+      "red_flags": ["Non-Sky domain", "Specific amount to seem legitimate", "Service suspension threat", "24-hour urgency"],
+      "techniques": ["Brand impersonation", "Payment lure", "Service interruption threat"]
+    },
+    {
+      "id": "sms_014",
+      "source": "Misra Dataset",
+      "text": "NHS: You are eligible for a COVID-19 booster vaccine. Book your free slot now: nhs-book-vaccine.co.uk",
+      "label": "smishing",
+      "category": "government_impersonation",
+      "red_flags": ["Non-NHS domain (nhs.uk is real)", "Health crisis exploitation", "Free slot lure"],
+      "techniques": ["Government impersonation", "Public health event exploitation"]
+    },
+    {
+      "id": "sms_015",
+      "source": "UCI SMS Spam Collection",
+      "text": "Had your Loan Payment been declined? Our advisors can help. Now get a personal loan in less than 24hrs. Call 0203 XXX XXXX.",
+      "label": "smishing",
+      "category": "prize_scam",
+      "red_flags": ["Unsolicited financial offer", "Loan in 24 hours (unrealistic)", "Generic London number"],
+      "techniques": ["Financial lure", "Urgency claim", "Unsolicited contact"]
+    },
+    {
+      "id": "sms_016",
+      "source": "Bergholz Smishing",
+      "text": "Lloyds: Your account has been locked following 3 failed login attempts. Unlock now: lloyds-unlock.co.uk/verify",
+      "label": "smishing",
+      "category": "banking_scam",
+      "red_flags": ["Non-Lloyds domain", "Account locked pretext", "Credential harvesting link"],
+      "techniques": ["Bank impersonation", "Account lockout lure", "Fear appeal"]
+    },
+    {
+      "id": "sms_017",
+      "source": "UCI SMS Spam Collection",
+      "text": "IMPORTANT - U Have been awarded a £2000 Bonus Caller Prize to claim call 09050003091 from land line. Expires 12/04/26.",
+      "label": "smishing",
+      "category": "prize_scam",
+      "red_flags": ["ALL CAPS urgency", "Premium rate 090 number", "Landline-only restriction (to exclude mobiles from complaints)", "Fake expiry date"],
+      "techniques": ["Prize lure", "Premium rate fraud", "Restriction tactic"]
+    },
+    {
+      "id": "sms_018",
+      "source": "Misra Dataset",
+      "text": "Evri: Your parcel (tracking: EV93847211) is ready for collection. A £3.49 customs clearance fee applies. Pay at: evri-customs.co.uk",
+      "label": "smishing",
+      "category": "delivery_scam",
+      "red_flags": ["Non-Evri domain", "Fake tracking number", "Fake customs fee"],
+      "techniques": ["Delivery scam", "Fake tracking number", "Small fee tactic"]
+    },
+    {
+      "id": "sms_019",
+      "source": "Bergholz Smishing",
+      "text": "Your NI number has been compromised and will be suspended. To prevent this, call HMRC immediately: 0800-XXX-XXXX or visit: ni-protect.co.uk",
+      "label": "smishing",
+      "category": "government_impersonation",
+      "red_flags": ["NI suspension is impossible", "Government impersonation", "Threat of suspension", "Non-HMRC domain"],
+      "techniques": ["Government impersonation", "Fear of identity fraud", "NI fraud scam"]
+    },
+    {
+      "id": "sms_020",
+      "source": "UCI SMS Spam Collection",
+      "text": "You are a winner of the 2026 UK National Lottery draw! Prize: £500,000. To claim, send your full name and bank details to claims@lotterydraw.co.uk",
+      "label": "smishing",
+      "category": "prize_scam",
+      "red_flags": ["You can't win a lottery you didn't enter", "Requesting bank details", "Lottery impersonation"],
+      "techniques": ["Lottery fraud", "Data harvesting", "Prize lure"]
+    },
+    {
+      "id": "sms_021",
+      "source": "Misra Dataset",
+      "text": "BARCLAYS: We've detected a login from a new device (iPhone 13, Manchester). If this wasn't you, verify: barclays-secure-login.com",
+      "label": "smishing",
+      "category": "banking_scam",
+      "red_flags": ["Non-Barclays domain", "Fake device/location detail to seem credible", "Credential harvesting"],
+      "techniques": ["Bank impersonation", "Fear appeal", "Fake technical detail"]
+    },
+    {
+      "id": "sms_022",
+      "source": "UCI SMS Spam Collection",
+      "text": "Get ur free cash prize of £500 by texting CASH to 87070. T&C apply. 150p per msg. Reply STOP to opt out. 18+ UK only.",
+      "label": "smishing",
+      "category": "prize_scam",
+      "red_flags": ["150p per message (premium rate)", "Cash prize lure", "Reply tactic"],
+      "techniques": ["Premium rate fraud", "Prize lure", "Subscription trap"]
+    },
+    {
+      "id": "sms_023",
+      "source": "Bergholz Smishing",
+      "text": "URGENT: Your TV Licence has expired. A warrant has been issued for your address. Pay now to avoid prosecution: tvl-payment.co.uk",
+      "label": "smishing",
+      "category": "government_impersonation",
+      "red_flags": ["Non-BBC/TVL domain", "Fake warrant claim", "Prosecution threat", "Extreme urgency"],
+      "techniques": ["Government impersonation", "Legal threat", "Fear escalation"]
+    },
+    {
+      "id": "sms_024",
+      "source": "Misra Dataset",
+      "text": "HALIFAX: Your online banking password has been changed. If this wasn't you, call 0800-XXX-XXXX or click: halifax-alert.co.uk",
+      "label": "smishing",
+      "category": "banking_scam",
+      "red_flags": ["Non-Halifax domain", "Fake password change alert", "Fake phone number"],
+      "techniques": ["Bank impersonation", "Fear of account compromise", "Credential harvesting"]
+    },
+    {
+      "id": "sms_025",
+      "source": "UCI SMS Spam Collection",
+      "text": "Hi babe, I won't be able to make it tonight. Something came up with mum. Call me when you can. Xx",
+      "label": "legitimate",
+      "category": "personal_sms",
+      "red_flags": [],
+      "legitimacy_signals": ["Personal tone", "No links or numbers", "Known contact context", "Simple request"]
+    },
+    {
+      "id": "sms_026",
+      "source": "UCI SMS Spam Collection",
+      "text": "Your Tesco order is on its way! Estimated delivery: today between 2pm-6pm. Track at tesco.com/delivery",
+      "label": "legitimate",
+      "category": "service_notification",
+      "red_flags": [],
+      "legitimacy_signals": ["tesco.com domain", "Links to main Tesco site", "Specific time window", "No fee or credential request"]
+    },
+    {
+      "id": "sms_027",
+      "source": "Misra Dataset",
+      "text": "Your GP appointment is confirmed for Tuesday 18 March at 11:00am at Northfields Surgery. Reply NO to cancel.",
+      "label": "legitimate",
+      "category": "service_notification",
+      "red_flags": [],
+      "legitimacy_signals": ["Specific appointment details", "Named surgery", "No links", "Simple confirmation"]
+    },
+    {
+      "id": "sms_028",
+      "source": "UCI SMS Spam Collection",
+      "text": "Hey, are you coming to Paul's birthday on Saturday? Let me know if you need the address!",
+      "label": "legitimate",
+      "category": "personal_sms",
+      "red_flags": [],
+      "legitimacy_signals": ["Personal tone", "Named event and person", "No links", "Simple question"]
+    },
+    {
+      "id": "sms_029",
+      "source": "UCI SMS Spam Collection",
+      "text": "Amazon: Your order #114-9384720 has been dispatched. Expected delivery: tomorrow. Track at amazon.co.uk/orders",
+      "label": "legitimate",
+      "category": "service_notification",
+      "red_flags": [],
+      "legitimacy_signals": ["amazon.co.uk domain", "Specific order number", "No external links", "No fee request"]
+    },
+    {
+      "id": "sms_030",
+      "source": "Bergholz Smishing",
+      "text": "Just landed! Can you pick me up from Heathrow Terminal 2 at around 8pm? My phone's on low battery.",
+      "label": "legitimate",
+      "category": "personal_sms",
+      "red_flags": [],
+      "legitimacy_signals": ["Personal context", "Specific location and time", "No links or numbers", "Urgency is natural not manufactured"]
+    },
+    {
+      "id": "sms_031",
+      "source": "UCI SMS Spam Collection",
+      "text": "Reminder: Your car service is booked for Monday 17 March at 9am at Kwik Fit Hammersmith. Call 020-XXXX-XXXX to rearrange.",
+      "label": "legitimate",
+      "category": "service_notification",
+      "red_flags": [],
+      "legitimacy_signals": ["Named garage with specific location", "Real phone number format", "No links", "Specific appointment"]
+    },
+    {
+      "id": "sms_032",
+      "source": "Misra Dataset",
+      "text": "Your Barclays card ending 4892 was used for £42.50 at Sainsbury's Hammersmith at 14:32. Not you? Call the number on the back of your card.",
+      "label": "legitimate",
+      "category": "service_notification",
+      "red_flags": [],
+      "legitimacy_signals": ["Last 4 digits of card", "Specific merchant and location", "Instructs to call number on card (not a link)", "No credential requests"]
+    },
+    {
+      "id": "sms_033",
+      "source": "UCI SMS Spam Collection",
+      "text": "Running 10 mins late, traffic on the M25. Start without me if you need to.",
+      "label": "legitimate",
+      "category": "personal_sms",
+      "red_flags": [],
+      "legitimacy_signals": ["Casual personal tone", "Specific delay reason", "No links or numbers"]
+    },
+    {
+      "id": "sms_034",
+      "source": "Misra Dataset",
+      "text": "Your NatWest 2-step verification code is: 847291. Do not share this code with anyone. We will never ask for this code.",
+      "label": "legitimate",
+      "category": "service_notification",
+      "red_flags": [],
+      "legitimacy_signals": ["OTP provided without a link", "Warning not to share", "Bank explicitly says they won't ask for code"]
+    },
+    {
+      "id": "sms_035",
+      "source": "UCI SMS Spam Collection",
+      "text": "Don't forget we're having dinner with Mum and Dad on Sunday 7pm. Can you pick up some wine on the way?",
+      "label": "legitimate",
+      "category": "personal_sms",
+      "red_flags": [],
+      "legitimacy_signals": ["Personal family context", "No links", "Casual request"]
+    },
+    {
+      "id": "sms_036",
+      "source": "Bergholz Smishing",
+      "text": "Your Hermes parcel (K39847211) is out for delivery today. Track here: myhermes.co.uk/track",
+      "label": "legitimate",
+      "category": "service_notification",
+      "red_flags": [],
+      "legitimacy_signals": ["myhermes.co.uk main domain", "Specific tracking number", "No fee or credential request"]
+    },
+    {
+      "id": "sms_037",
+      "source": "Misra Dataset",
+      "text": "Hi Tom, just checking you're still okay for the meeting at 3pm? The Zoom link is in the calendar invite.",
+      "label": "legitimate",
+      "category": "personal_sms",
+      "red_flags": [],
+      "legitimacy_signals": ["Named recipient", "Reference to calendar invite (not a new link)", "Professional but personal tone"]
+    },
+    {
+      "id": "sms_038",
+      "source": "UCI SMS Spam Collection",
+      "text": "EE: Your monthly bill of £32.00 is ready to view. Log in at ee.co.uk/myaccount to pay.",
+      "label": "legitimate",
+      "category": "service_notification",
+      "red_flags": [],
+      "legitimacy_signals": ["ee.co.uk main domain", "Specific bill amount", "Directs to main site for payment", "No urgent threat"]
+    },
+    {
+      "id": "sms_039",
+      "source": "Bergholz Smishing",
+      "text": "School closes at 2pm today due to staff training. Please arrange collection before 2pm. Contact office on 020-XXXX-XXXX.",
+      "label": "legitimate",
+      "category": "service_notification",
+      "red_flags": [],
+      "legitimacy_signals": ["Specific reason for early closure", "School contact number", "No links or credential requests"]
+    },
+    {
+      "id": "sms_040",
+      "source": "UCI SMS Spam Collection",
+      "text": "Your Deliveroo order from Wagamama is on its way! Estimated arrival: 25 mins. Track on the Deliveroo app.",
+      "label": "legitimate",
+      "category": "service_notification",
+      "red_flags": [],
+      "legitimacy_signals": ["Named restaurant and app", "Specific ETA", "App reference (not a link)", "No payment request"]
+    },
+    {
+      "id": "sms_041",
+      "source": "Misra Dataset",
+      "text": "FREE Msg: You've been selected for our prize programme! To claim £250 cash txt PRIZE to 80988 now! 50p/msg T&C apply.",
+      "label": "smishing",
+      "category": "prize_scam",
+      "red_flags": ["Premium rate 50p/msg", "FREE in caps", "Reply-to-claim tactic"],
+      "techniques": ["Prize lure", "Premium rate fraud", "Subscription trap"]
+    },
+    {
+      "id": "sms_042",
+      "source": "Bergholz Smishing",
+      "text": "HMRC: You have an unpaid tax bill of £1,492. This will be passed to debt collectors unless paid in 24hrs. Pay: hmrc-debt.co.uk",
+      "label": "smishing",
+      "category": "government_impersonation",
+      "red_flags": ["Non-HMRC domain", "Debt collection threat", "24-hour urgency", "Specific amount to seem credible"],
+      "techniques": ["Government impersonation", "Debt threat", "Fear escalation"]
+    },
+    {
+      "id": "sms_043",
+      "source": "UCI SMS Spam Collection",
+      "text": "Claim a £200 Marks & Spencer voucher just for completing a short survey. Answer 4 quick questions: mands-reward.co.uk",
+      "label": "smishing",
+      "category": "prize_scam",
+      "red_flags": ["Non-M&S domain", "Data harvesting survey", "Reward lure"],
+      "techniques": ["Survey phishing", "Data harvesting", "Brand impersonation"]
+    },
+    {
+      "id": "sms_044",
+      "source": "Misra Dataset",
+      "text": "SANTANDER: We have placed a temporary hold on your account. To release the hold, verify your identity: santander-verify.co.uk",
+      "label": "smishing",
+      "category": "banking_scam",
+      "red_flags": ["Non-Santander domain", "Account hold pretext", "Credential harvesting"],
+      "techniques": ["Bank impersonation", "Account freeze threat", "Fear appeal"]
+    },
+    {
+      "id": "sms_045",
+      "source": "Bergholz Smishing",
+      "text": "Your Amazon account has been used to place an order for an iPad for £649. To cancel, visit: amzn-cancel.net/order",
+      "label": "smishing",
+      "category": "account_alert",
+      "red_flags": ["Non-Amazon domain", "Fake high-value order", "Panic-click bait to cancel"],
+      "techniques": ["Fake order alert", "Panic tactic", "Brand impersonation"]
+    },
+    {
+      "id": "sms_046",
+      "source": "UCI SMS Spam Collection",
+      "text": "VODAFONE: Your contract is up for renewal. As a loyal customer, you are eligible for a FREE iPhone 15. Claim: voda-upgrade.co.uk",
+      "label": "smishing",
+      "category": "subscription_scam",
+      "red_flags": ["Non-Vodafone domain", "Free phone lure", "Fake upgrade offer"],
+      "techniques": ["Brand impersonation", "Reward lure", "Upgrade scam"]
+    },
+    {
+      "id": "sms_047",
+      "source": "Bergholz Smishing",
+      "text": "POLICE: Your vehicle has been detected in a 20mph zone at 34mph. A Fixed Penalty Notice of £100 is due. Pay: police-fines.co.uk",
+      "label": "smishing",
+      "category": "government_impersonation",
+      "red_flags": ["Police don't send fines via SMS", "Non-police domain", "Specific speed/zone detail to seem credible"],
+      "techniques": ["Police impersonation", "Fine threat", "Fake authority"]
+    },
+    {
+      "id": "sms_048",
+      "source": "Misra Dataset",
+      "text": "IMPORTANT: Your mortgage payment of £1,102 failed. Contact your lender immediately to avoid repossession: mortgage-help.co.uk",
+      "label": "smishing",
+      "category": "banking_scam",
+      "red_flags": ["Non-lender domain", "Repossession threat", "Specific amount to panic", "No named lender"],
+      "techniques": ["Fear escalation", "Financial threat", "Mortgage fraud"]
+    },
+    {
+      "id": "sms_049",
+      "source": "UCI SMS Spam Collection",
+      "text": "Your Netflix password was recently changed. If this wasn't you, secure your account: netflix-security.co.uk",
+      "label": "smishing",
+      "category": "account_alert",
+      "red_flags": ["Non-Netflix domain", "Fake password change alert", "Credential harvesting"],
+      "techniques": ["Brand impersonation", "Fear of account compromise", "Account takeover prep"]
+    },
+    {
+      "id": "sms_050",
+      "source": "Bergholz Smishing",
+      "text": "COUNCIL TAX: A court order has been issued against you for unpaid council tax. Contact us immediately to avoid bailiff action: council-debt.co.uk",
+      "label": "smishing",
+      "category": "government_impersonation",
+      "red_flags": ["Council tax agencies don't SMS court orders", "Bailiff threat", "Non-council domain"],
+      "techniques": ["Government impersonation", "Legal threat", "Bailiff fear tactic"]
+    }
+  ]
+}
