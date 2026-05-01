@@ -38,6 +38,13 @@ git clone https://github.com/Oliver33Holland/Phish-X.git
 cd Phish-X
 ```
 
+> **Already cloned before?** Delete the old folder first, then clone again:
+> ```
+> rmdir /s /q Phish-X
+> git clone https://github.com/Oliver33Holland/Phish-X.git
+> cd Phish-X
+> ```
+
 ### 3. Run the installer
 
 Double-click **`install.cmd`** (click Yes if prompted for admin rights).
@@ -56,18 +63,22 @@ install.cmd
 ### Desktop window (recommended)
 Double-click **`Phish X - Desktop (No Browser).cmd`**
 
-Or from a terminal (quotes required):
+Or from a terminal:
 ```
 "Phish X - Desktop (No Browser).cmd"
 ```
 
+> ⚠️ **The quote marks `"` are essential when typing in a terminal.** The filename contains spaces, so without quotes Windows will only read the first word and show an error. Double-clicking in File Explorer always works without quotes.
+
 ### In your browser
 Double-click **`Launch Phish X.cmd`**
 
-Or from a terminal (quotes required):
+Or from a terminal:
 ```
 "Launch Phish X.cmd"
 ```
+
+> ⚠️ **Always wrap filenames containing spaces in quote marks `"` when using a terminal.**
 
 The app opens at `http://127.0.0.1:8000`
 
