@@ -1,36 +1,80 @@
-# Phish X – AI-Powered Phishing Awareness Training
+# Phish X – Security Awareness Training Platform
 
-Phish X is a desktop security awareness training platform that uses machine learning to detect phishing emails, vishing calls, and AI-generated threats.
+Phish X is an AI-powered security awareness training tool for detecting phishing emails, vishing calls, and social engineering attacks. It uses machine learning (Naive Bayes, Random Forest, MFCC audio analysis) running locally — no data leaves your machine.
 
 ---
 
-## Quick Start
+## Requirements
 
-### Step 1 – Install Python
+- **Windows 10 or 11**
+- **Python 3.11** — download from [python.org/downloads](https://www.python.org/downloads/windows/)
+  > During installation, tick **"Add Python to PATH"** — this is required
 
-1. Go to [python.org/downloads](https://www.python.org/downloads/)
-2. Download the latest **Python 3.11** (or newer) installer
-3. Run the installer — **tick "Add Python to PATH"** before clicking Install
+---
 
-### Step 2 – Download Phish X
+## Installation
 
-Clone or download this repository as a ZIP and extract it to a folder on your computer.
+### 1. Install Python 3.11
 
-### Step 3 – Install dependencies
+1. Go to [python.org/downloads](https://www.python.org/downloads/windows/)
+2. Click **"Download Python 3.11.x"**
+3. Run the installer
+4. **Tick "Add Python to PATH"** at the bottom of the first screen
+5. Click **Install Now**
 
-Double-click **`install.cmd`**
+Verify it worked — open a terminal and run:
+```
+python --version
+```
+You should see `Python 3.11.x`
 
-> If Windows asks for administrator permission, click **Yes** — this is needed to add an antivirus exclusion so the app runs correctly.
+### 2. Download Phish X
 
-This will:
-- Create a Python virtual environment
-- Install all required packages automatically
+Click the green **Code** button above → **Download ZIP**, then extract it.
 
-### Step 4 – Run the app
+Or clone with Git:
+```
+git clone https://github.com/Oliver33Holland/Phish-X.git
+cd Phish-X
+```
 
+### 3. Run the installer
+
+Double-click **`install.cmd`** (click Yes if prompted for admin rights).
+
+This sets up the virtual environment and installs all dependencies automatically.
+
+Or from a terminal:
+```
+install.cmd
+```
+
+---
+
+## Running the App
+
+### Desktop window (recommended)
 Double-click **`Phish X - Desktop (No Browser).cmd`**
 
-The Phish X window will open. No browser or internet connection required.
+Or from a terminal:
+```
+"Phish X - Desktop (No Browser).cmd"
+```
+
+### In your browser
+Double-click **`Launch Phish X.cmd`**
+
+Or from a terminal:
+```
+"Launch Phish X.cmd"
+```
+
+The app opens at `http://127.0.0.1:8000`
+
+### From Python directly
+```
+venv\Scripts\python.exe phishx_app.py
+```
 
 ---
 
@@ -38,48 +82,25 @@ The Phish X window will open. No browser or internet connection required.
 
 | Feature | Description |
 |---|---|
-| **Phishing Detection** | Analyse emails using TF-IDF + Naive Bayes + Random Forest ML models |
-| **Vishing Detection** | Upload call recordings or paste transcripts to detect suspicious speech patterns |
-| **Gamified Training** | Interactive mini-game — spot the phishing email and earn points |
-| **Campaign Manager** | Create and manage phishing simulation campaigns |
-| **Fake Login Pages** | Simulated login pages for awareness training |
-| **Analytics Dashboard** | Track results, scores, and campaign outcomes |
-
----
-
-## Requirements
-
-- Windows 10 or 11
-- Python 3.11 or newer ([python.org](https://www.python.org/downloads/))
-- Internet connection (first run only, to install packages)
-
-All Python dependencies are listed in `requirements.txt` and installed automatically by `install.cmd`.
-
----
-
-## Folder Structure
-
-```
-Phish X/
-├── app/                          # Backend – FastAPI routes and ML models
-├── static/                       # Frontend – HTML/CSS/JS UI
-├── data/                         # Runtime data (campaigns, analytics)
-├── install.cmd                   # One-click installer
-├── Phish X - Desktop (No Browser).cmd   # Desktop launcher
-├── Launch Phish X.cmd            # Browser launcher (alternative)
-├── requirements.txt              # Python dependencies
-└── run_web.py                    # Web server entry point
-```
+| **Email Phishing Detection** | Paste raw email source or plain text — scored by TF-IDF + Naive Bayes + Random Forest |
+| **Vishing Detection** | Upload call recordings or paste transcripts to detect suspicious speech patterns using MFCC audio analysis |
+| **Gamified Training** | Spot-the-phish mini-game with difficulty levels and scoring |
+| **Campaign Manager** | Create and track phishing simulation campaigns with target lists |
+| **Fake Login Pages** | Simulated credential-harvest pages for awareness demonstrations |
+| **Analytics Dashboard** | Track click rates, game scores, and campaign results |
 
 ---
 
 ## Troubleshooting
 
-**The app won't open / antivirus blocks it**
-Run `install.cmd` as administrator — it adds an exclusion so the app isn't blocked.
+**Antivirus blocks the app**
+Run `install.cmd` as administrator — it adds a Windows Defender exclusion automatically. For McAfee, add the Phish X folder as an excluded path in McAfee settings.
 
 **"Python not found" error**
-Make sure Python is installed and you ticked "Add Python to PATH" during installation.
+Reinstall Python and make sure you ticked **"Add Python to PATH"** during setup.
 
-**MP4/audio files won't transcribe**
-Install ffmpeg from [ffmpeg.org/download.html](https://ffmpeg.org/download.html) and add it to your PATH. Alternatively, paste the call transcript manually into the text box.
+**MP4 audio files won't transcribe**
+Install ffmpeg from [ffmpeg.org/download.html](https://ffmpeg.org/download.html), add it to PATH, then restart. Alternatively paste the transcript manually into the text box provided.
+
+**Port already in use**
+Close any other running Phish X instances. The app tries ports 8000, 8001, 8080, and 8888 automatically.
