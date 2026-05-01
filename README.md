@@ -56,7 +56,7 @@ install.cmd
 ### Desktop window (recommended)
 Double-click **`Phish X - Desktop (No Browser).cmd`**
 
-Or from a terminal:
+Or from a terminal (quotes required):
 ```
 "Phish X - Desktop (No Browser).cmd"
 ```
@@ -64,7 +64,7 @@ Or from a terminal:
 ### In your browser
 Double-click **`Launch Phish X.cmd`**
 
-Or from a terminal:
+Or from a terminal (quotes required):
 ```
 "Launch Phish X.cmd"
 ```
