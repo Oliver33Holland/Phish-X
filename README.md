@@ -47,7 +47,7 @@ cd Phish-X
 
 ### 3. Run the installer
 
-Double-click **`install.cmd`** (click Yes if prompted for admin rights).
+Double-click **`install.cmd`**
 
 This sets up the virtual environment and installs all dependencies automatically.
 
@@ -104,8 +104,6 @@ venv\Scripts\python.exe phishx_app.py
 
 ## Troubleshooting
 
-**Antivirus blocks the app**
-Run `install.cmd` as administrator - it adds a Windows Defender exclusion automatically. For McAfee, add the Phish X folder as an excluded path in McAfee settings.
 
 **"Python not found" error**
 Reinstall Python and make sure you ticked **"Add Python to PATH"** during setup.
