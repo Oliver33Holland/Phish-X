@@ -1,5 +1,5 @@
-"""
-Phish X – Full desktop application with embedded browser (Chromium).
+﻿"""
+Phish X - Full desktop application with embedded browser (Chromium).
 No Internet Explorer or external browser: everything runs inside the app window.
 """
 
@@ -28,7 +28,7 @@ else:
 
 _PORTS = [8000, 8001, 8080, 8888]
 
-# In a windowed PyInstaller build sys.stdin/stdout are None – guard against that.
+# In a windowed PyInstaller build sys.stdin/stdout are None - guard against that.
 def _fatal(title: str, message: str) -> None:
     """Show an error dialog then exit. Works in both windowed and console mode."""
     try:
@@ -40,7 +40,7 @@ def _fatal(title: str, message: str) -> None:
         box.setIcon(QMessageBox.Icon.Critical)
         box.exec()
     except Exception:
-        # Absolute last resort – only works when a console is present
+        # Absolute last resort - only works when a console is present
         try:
             sys.stderr.write(title + ": " + message + "\n")
         except Exception:
@@ -61,7 +61,7 @@ _server_error: str = ""
 
 
 def _log_dir() -> Path:
-    """Return a writable directory for logs – next to the exe when frozen."""
+    """Return a writable directory for logs - next to the exe when frozen."""
     if getattr(sys, "frozen", False):
         return Path(sys.executable).resolve().parent
     return Path(__file__).resolve().parent
@@ -101,7 +101,7 @@ def main():
             break
     if port is None:
         _fatal(
-            "Phish X – Port error",
+            "Phish X - Port error",
             "No free port available (tried %s).\n\nClose other Phish X instances and try again." % _PORTS,
         )
 
@@ -134,13 +134,13 @@ def main():
             msg += "\n\nError details:\n" + detail[:800]
         else:
             msg += "\n\nPlease try running the app again."
-        _fatal("Phish X – Startup error", msg)
+        _fatal("Phish X - Startup error", msg)
 
     if _server_error:
         log_path = _log_dir() / "phishx_error.log"
         detail = _server_error[:800]
         _fatal(
-            "Phish X – Server crashed",
+            "Phish X - Server crashed",
             "The server crashed during startup.\n\nError:\n%s\n\nFull log: %s" % (detail, log_path),
         )
 
@@ -150,7 +150,7 @@ def main():
         from PyQt6.QtCore import QUrl
         from PyQt6.QtGui import QIcon
     except ImportError as exc:
-        _fatal("Phish X – Missing components", "Required components are missing:\n%s" % exc)
+        _fatal("Phish X - Missing components", "Required components are missing:\n%s" % exc)
 
     app_qt = QApplication.instance() or QApplication(sys.argv)
     app_qt.setApplicationName("Phish X")

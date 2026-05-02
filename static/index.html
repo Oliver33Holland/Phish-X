@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Phish X – Train & Detect</title>
+  <title>Phish X - Train & Detect</title>
   <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
   <link rel="icon" type="image/png" href="/static/logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -211,11 +211,11 @@
 
     <div id="page-detect" class="hidden">
       <h1>Detect AI-generated phishing</h1>
-      <p class="subtitle">Paste the <strong>full raw source</strong> of a suspicious email. The raw source reveals hidden routing information, sender authentication results, and domain data that are invisible in the normal email view — giving far more accurate detection than subject and body text alone.</p>
+      <p class="subtitle">Paste the <strong>full raw source</strong> of a suspicious email. The raw source reveals hidden routing information, sender authentication results, and domain data that are invisible in the normal email view - giving far more accurate detection than subject and body text alone.</p>
 
       <div class="card" style="border-left:4px solid #1a73e8; background:#161b22; margin-bottom:0.75rem;">
         <h3 style="margin-top:0; color:#58a6ff;">&#128196; How to copy the raw email source</h3>
-        <p style="margin:0 0 0.6rem; font-size:0.9rem; color:#c9d1d9;">The raw source contains the full <strong>Received</strong> chain (server hops), <strong>SPF / DKIM / DMARC</strong> authentication results, the <strong>original sender IP</strong>, and the true sending domain — all hidden from the normal email view. This is the same information IT security teams use to investigate suspicious emails.</p>
+        <p style="margin:0 0 0.6rem; font-size:0.9rem; color:#c9d1d9;">The raw source contains the full <strong>Received</strong> chain (server hops), <strong>SPF / DKIM / DMARC</strong> authentication results, the <strong>original sender IP</strong>, and the true sending domain - all hidden from the normal email view. This is the same information IT security teams use to investigate suspicious emails.</p>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.6rem 1.2rem;">
           <div>
             <p style="margin:0 0 0.2rem; font-weight:600; color:#e6edf3;">&#128247; Outlook / Outlook.com</p>
@@ -267,7 +267,7 @@
     <div id="page-generator" class="hidden">
       <h1>Phishing Email Generator</h1>
       <p class="subtitle">Generate realistic simulated phishing emails with malware payload breakdowns for security awareness training.</p>
-      <div class="training-banner">&#9888; TRAINING USE ONLY – All output is simulated. No real malware is generated. For security awareness and testing purposes only.</div>
+      <div class="training-banner">&#9888; TRAINING USE ONLY - All output is simulated. No real malware is generated. For security awareness and testing purposes only.</div>
       <div class="card">
         <div class="gen-grid">
           <div>
@@ -301,7 +301,7 @@
     <div id="page-fakepages" class="hidden">
       <h1>Fake Login Page Generator</h1>
       <p class="subtitle">Generate simulated phishing login pages for security awareness training. All pages show a training banner and capture no credentials.</p>
-      <div class="training-banner">&#9888; TRAINING USE ONLY – These pages are simulations. No credentials are collected or stored. Use only in controlled training environments.</div>
+      <div class="training-banner">&#9888; TRAINING USE ONLY - These pages are simulations. No credentials are collected or stored. Use only in controlled training environments.</div>
       <div id="fakePageList" class="grid"></div>
       <div id="fakePageOptions" class="card hidden">
         <h2 id="fakePageTitle">Configure page</h2>
@@ -514,7 +514,7 @@
         types.forEach(t => {
           const o = document.createElement('option');
           o.value = t.type;
-          o.textContent = t.name + ' – ' + t.description.slice(0, 50) + '…';
+          o.textContent = t.name + ' - ' + t.description.slice(0, 50) + '…';
           sel.appendChild(o);
         });
       } catch (_) {}
@@ -533,7 +533,7 @@
         const d = await apiPost('/api/generator/generate', req);
         result.innerHTML = `
           <div class="card">
-            <div class="training-banner">&#9888; SIMULATED EMAIL – FOR SECURITY TRAINING ONLY. Do not send to real users.</div>
+            <div class="training-banner">&#9888; SIMULATED EMAIL - FOR SECURITY TRAINING ONLY. Do not send to real users.</div>
             <h2>Generated phishing email</h2>
             <p><strong>Subject:</strong> ${escapeHtml(d.subject)}</p>
             <p><strong>From:</strong> ${escapeHtml(d.sender_display)}</p>
@@ -571,7 +571,7 @@
           </div>
           <div class="card" onclick="showPage('page-game')">
             <h2>Mini game</h2>
-            <p>Spot the phishing – gamified training</p>
+            <p>Spot the phishing - gamified training</p>
           </div>
           <div class="card" onclick="showPage('page-emails')">
             <h2>Phishing emails</h2>
@@ -587,7 +587,7 @@
           </div>
           <div class="card" onclick="showPage('page-fakepages')">
             <h2>&#128279; Fake pages</h2>
-            <p>Simulated fake login pages – Google, Microsoft, banks</p>
+            <p>Simulated fake login pages - Google, Microsoft, banks</p>
           </div>
           <div class="card" onclick="showPage('page-vishing')">
             <h2>Vishing</h2>
@@ -757,7 +757,7 @@
             </div>
             <h2 style="margin:0 0 0.4rem;">${escapeHtml(email.subject)}</h2>
             <p style="font-size:0.85rem;color:var(--muted);margin:0 0 1rem;">From: ${escapeHtml(email.sender)}</p>
-            <div class="training-banner" style="margin-bottom:1rem;">&#9888; SIMULATION – For security awareness training only. {{.FirstName}}, {{.LastName}}, and {{.URL}} are GoPhish-style placeholders.</div>
+            <div class="training-banner" style="margin-bottom:1rem;">&#9888; SIMULATION - For security awareness training only. {{.FirstName}}, {{.LastName}}, and {{.URL}} are GoPhish-style placeholders.</div>
             <div class="email-view" style="padding:1rem;border:1px solid var(--border);border-radius:8px;margin-bottom:1rem;">${escapeHtml(email.body)}</div>
             <div class="red-flags"><strong>Red flags to spot:</strong><ul>${email.red_flags.map(f => '<li>🚩 ' + escapeHtml(f) + '</li>').join('')}</ul></div>
             <div style="margin-top:1rem;">
@@ -832,7 +832,7 @@
                 </div>
                 <h2 style="margin:0 0 0.4rem;">${escapeHtml(email.subject)}</h2>
                 <p style="font-size:0.85rem;color:var(--muted);margin:0 0 1rem;">From: ${escapeHtml(email.sender)}</p>
-                <div class="training-banner" style="margin-bottom:1rem;">&#9888; SIMULATION – For security awareness training only. {{.FirstName}}, {{.LastName}}, and {{.URL}} are GoPhish-style placeholders.</div>
+                <div class="training-banner" style="margin-bottom:1rem;">&#9888; SIMULATION - For security awareness training only. {{.FirstName}}, {{.LastName}}, and {{.URL}} are GoPhish-style placeholders.</div>
                 <div class="email-view" style="padding:1rem;border:1px solid var(--border);border-radius:8px;margin-bottom:1rem;">${escapeHtml(email.body)}</div>
                 <div class="red-flags"><strong>Red flags to spot:</strong><ul>${email.red_flags.map(f => '<li>🚩 ' + escapeHtml(f) + '</li>').join('')}</ul></div>
                 <div style="margin-top:1rem;">
@@ -944,7 +944,7 @@
         const riskColor = {critical:'#f85149', high:'#d29922', medium:'#e3b341', low:'#3fb950'}[d.risk_level] || '#8b949e';
         const riskIcon  = {critical:'&#128308;', high:'&#128992;', medium:'&#128993;', low:'&#128994;'}[d.risk_level] || '&#9898;';
         const phishColor = d.is_likely_phishing ? '#f85149' : '#3fb950';
-        const phishLabel = d.is_likely_phishing ? 'YES – LIKELY PHISHING' : 'No – appears legitimate';
+        const phishLabel = d.is_likely_phishing ? 'YES - LIKELY PHISHING' : 'No - appears legitimate';
 
         // ── Verdict bar ──────────────────────────────────────────────────────
         const verdictBar = `
@@ -990,7 +990,7 @@
         let headerHtml = '';
         if (d.header_findings && d.header_findings.length) {
           headerHtml = `<div style="background:#1a1e26; border-left:4px solid #d29922; border-radius:6px; padding:0.75rem 1rem; margin-bottom:0.9rem;">
-            <p style="margin:0 0 0.4rem; font-weight:600;">&#128269; Header analysis — ${d.header_findings.length} issue${d.header_findings.length>1?'s':''} found</p>
+            <p style="margin:0 0 0.4rem; font-weight:600;">&#128269; Header analysis - ${d.header_findings.length} issue${d.header_findings.length>1?'s':''} found</p>
             <ul style="margin:0; padding-left:1.2rem;">${d.header_findings.map(x=>'<li style="margin-bottom:0.3rem; font-size:0.88rem;">'+escapeHtml(x)+'</li>').join('')}</ul>
           </div>`;
         } else if (d.extracted_headers && Object.keys(d.extracted_headers).length) {
@@ -1166,7 +1166,7 @@
       if (!f) { alert('Please select a CSV file.'); return; }
       const fd = new FormData();
       fd.append('file', f);
-      // Use a temporary campaign id placeholder – just parse client-side approach via API
+      // Use a temporary campaign id placeholder - just parse client-side approach via API
       // We create a minimal temp campaign to import then merge, but simpler: parse via upload endpoint
       // Actually import_targets_csv is server-side; send a small request to a parse helper
       // Re-use the upload to a new temp campaign then merge into draft

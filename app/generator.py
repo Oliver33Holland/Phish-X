@@ -1,5 +1,5 @@
 ﻿"""
-Phishing Email Generator – SECURITY TRAINING USE ONLY.
+Phishing Email Generator - SECURITY TRAINING USE ONLY.
 
 Generates realistic simulated phishing emails with simulated malware payload
 descriptions for security awareness training. No real malware is created.
@@ -66,13 +66,13 @@ MALWARE_TYPES = [
 
 def _generate_ransomware_email(target_org: str, sender_name: str) -> dict:
     return {
-        "subject": f"Invoice #{random.randint(10000, 99999)} overdue – immediate action required",
+        "subject": f"Invoice #{random.randint(10000, 99999)} overdue - immediate action required",
         "sender_display": f"Accounts Payable <billing@{target_org.lower().replace(' ','-')}-invoices.com>",
         "body": f"""Dear {target_org} Team,
 
 Please find attached the overdue invoice for services rendered last month. The total outstanding balance requires your urgent attention to avoid service interruption.
 
-To view and process the invoice, please open the attached document and click "Enable Content" when prompted – this is required by our secure document system.
+To view and process the invoice, please open the attached document and click "Enable Content" when prompted - this is required by our secure document system.
 
 Attachment: Invoice_{random.randint(10000, 99999)}.docm
 
@@ -95,7 +95,7 @@ We have detected unusual sign-in activity on your account. To protect your accou
 
 To restore full access, please verify your identity using the link below within the next 24 hours:
 
-[Verify My Account – Click Here]
+[Verify My Account - Click Here]
 https://{fake_domain}/verify?token={uuid.uuid4().hex[:16]}
 
 Failure to verify will result in permanent account suspension. We apologise for any inconvenience.
@@ -108,7 +108,7 @@ IT Security Team""",
 
 def _generate_rat_email(target_org: str, sender_name: str) -> dict:
     return {
-        "subject": f"Urgent: Updated remote access policy – action required by Friday",
+        "subject": f"Urgent: Updated remote access policy - action required by Friday",
         "sender_display": f"IT Helpdesk <helpdesk@{target_org.lower().replace(' ','-')}-it-support.com>",
         "body": f"""Hi,
 
@@ -130,7 +130,7 @@ IT Helpdesk""",
 
 def _generate_infostealer_email(target_org: str, sender_name: str) -> dict:
     return {
-        "subject": f"Shared with you: {target_org} Q4 report – confidential",
+        "subject": f"Shared with you: {target_org} Q4 report - confidential",
         "sender_display": f"{sender_name} <{sender_name.lower().replace(' ','.')}@sharepoint-files-secure.com>",
         "body": f"""Hi,
 
@@ -150,7 +150,7 @@ Thanks,
 
 def _generate_macro_email(target_org: str, sender_name: str) -> dict:
     return {
-        "subject": "Your contract renewal – please review and sign",
+        "subject": "Your contract renewal - please review and sign",
         "sender_display": f"Legal & Compliance <legal@{target_org.lower().replace(' ','-')}-contracts.net>",
         "body": f"""Dear Team,
 
@@ -191,7 +191,7 @@ class GeneratedPhishingEmail(BaseModel):
     payload_indicators: list[str]
     real_world_examples: list[str]
     training_notes: list[str]
-    disclaimer: str = "SIMULATED – FOR SECURITY TRAINING ONLY. No real malware. Do not send to real users."
+    disclaimer: str = "SIMULATED - FOR SECURITY TRAINING ONLY. No real malware. Do not send to real users."
 
 
 class GenerateRequest(BaseModel):

@@ -1,5 +1,5 @@
-"""
-Voice Analyzer – Upload audio or video files to detect vishing attacks.
+﻿"""
+Voice Analyzer - Upload audio or video files to detect vishing attacks.
 
 Processing pipeline:
   1. Convert to WAV (pydub / ffmpeg) if needed.
@@ -10,7 +10,7 @@ Processing pipeline:
      classifier (see app/ml_models.py).
 
 Falls back gracefully if optional dependencies (pydub, librosa, ffmpeg) are
-missing – each stage degrades independently.
+missing - each stage degrades independently.
 """
 
 import logging
@@ -112,7 +112,7 @@ def _convert_to_wav(input_path: str, output_wav: str) -> None:
         else:
             audio = AudioSegment.from_file(input_path)
 
-        # Mono 16kHz WAV – best for speech recognition
+        # Mono 16kHz WAV - best for speech recognition
         audio = audio.set_channels(1).set_frame_rate(16000)
         audio.export(output_wav, format="wav")
     except Exception as e:
@@ -145,7 +145,7 @@ def _classify_audio_deepfake(wav_path: str) -> dict:
     try:
         import librosa
     except ImportError:
-        logger.debug("Librosa not installed – skipping acoustic deepfake analysis.")
+        logger.debug("Librosa not installed - skipping acoustic deepfake analysis.")
         return {}
 
     try:

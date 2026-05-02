@@ -1,14 +1,14 @@
-# Phish X – Security Awareness Training Platform
+﻿# Phish X - Security Awareness Training Platform
 
-Phish X is an AI-powered security awareness training tool for detecting phishing emails, vishing calls, and social engineering attacks. It uses machine learning (Naive Bayes, Random Forest, MFCC audio analysis) running locally — no data leaves your machine.
+Phish X is an AI-powered security awareness training tool for detecting phishing emails, vishing calls, and social engineering attacks. It uses machine learning (Naive Bayes, Random Forest, MFCC audio analysis) running locally - no data leaves your machine.
 
 ---
 
 ## Requirements
 
 - **Windows 10 or 11**
-- **Python 3.11** — download from [python.org/downloads](https://www.python.org/downloads/windows/)
-  > During installation, tick **"Add Python to PATH"** — this is required
+- **Python 3.11** - download from [python.org/downloads](https://www.python.org/downloads/windows/)
+  > During installation, tick **"Add Python to PATH"** - this is required
 
 ---
 
@@ -22,7 +22,7 @@ Phish X is an AI-powered security awareness training tool for detecting phishing
 4. **Tick "Add Python to PATH"** at the bottom of the first screen
 5. Click **Install Now**
 
-Verify it worked — open a terminal and run:
+Verify it worked - open a terminal and run:
 ```
 python --version
 ```
@@ -93,7 +93,7 @@ venv\Scripts\python.exe phishx_app.py
 
 | Feature | Description |
 |---|---|
-| **Email Phishing Detection** | Paste raw email source or plain text — scored by TF-IDF + Naive Bayes + Random Forest |
+| **Email Phishing Detection** | Paste raw email source or plain text - scored by TF-IDF + Naive Bayes + Random Forest |
 | **Vishing Detection** | Upload call recordings or paste transcripts to detect suspicious speech patterns using MFCC audio analysis |
 | **Gamified Training** | Spot-the-phish mini-game with difficulty levels and scoring |
 | **Campaign Manager** | Create and track phishing simulation campaigns with target lists |
@@ -105,7 +105,7 @@ venv\Scripts\python.exe phishx_app.py
 ## Troubleshooting
 
 **Antivirus blocks the app**
-Run `install.cmd` as administrator — it adds a Windows Defender exclusion automatically. For McAfee, add the Phish X folder as an excluded path in McAfee settings.
+Run `install.cmd` as administrator - it adds a Windows Defender exclusion automatically. For McAfee, add the Phish X folder as an excluded path in McAfee settings.
 
 **"Python not found" error**
 Reinstall Python and make sure you ticked **"Add Python to PATH"** during setup.

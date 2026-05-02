@@ -1,5 +1,5 @@
-"""
-Dataset Loader – Phish X  (BACKEND INTERNAL – NOT EXPOSED TO USERS)
+﻿"""
+Dataset Loader - Phish X  (BACKEND INTERNAL - NOT EXPOSED TO USERS)
 
 Loads the four bundled datasets from the private _datasets/ package directory.
 Dataset files live inside the Python app package and are never served to clients.
@@ -12,10 +12,10 @@ Internal API surface (used only by detection engine and summary endpoint):
   - get_all_dataset_info()          → metadata/statistics only (no samples)
 
 Bundled datasets (private, backend-only):
-  1. Phishing email   – SpamAssassin, CEAS 2008, Enron-Spam, Nazario
-  2. Legitimate email – SpamAssassin Ham, Enron Ham, Ling-Spam
-  3. SMS phishing     – UCI SMS Spam Collection, Misra, Bergholz
-  4. Audio deepfake   – ASVspoof 2019/2021, FakeAVCeleb, WaveFake, ADD 2022
+  1. Phishing email   - SpamAssassin, CEAS 2008, Enron-Spam, Nazario
+  2. Legitimate email - SpamAssassin Ham, Enron Ham, Ling-Spam
+  3. SMS phishing     - UCI SMS Spam Collection, Misra, Bergholz
+  4. Audio deepfake   - ASVspoof 2019/2021, FakeAVCeleb, WaveFake, ADD 2022
 """
 
 import json
@@ -25,7 +25,7 @@ from collections import Counter
 from pathlib import Path
 
 # ---------------------------------------------------------------------------
-# Path resolution – datasets are in the private _datasets/ sub-package.
+# Path resolution - datasets are in the private _datasets/ sub-package.
 # This directory is INSIDE the Python package, not in data/ or static/.
 # Works in dev mode and when frozen by PyInstaller.
 # ---------------------------------------------------------------------------
@@ -170,7 +170,7 @@ def score_text_against_dataset(text: str, mode: str = "email") -> dict:
     """
     Score text against the dataset-derived term-frequency model.
 
-    Returns only the numeric score and metadata – NEVER raw dataset samples.
+    Returns only the numeric score and metadata - NEVER raw dataset samples.
 
     Args:
         text: Text to analyse.
@@ -178,10 +178,10 @@ def score_text_against_dataset(text: str, mode: str = "email") -> dict:
 
     Returns:
         {
-          dataset_score: float,        – data-driven phishing probability
-          top_phishing_terms: list,    – high-scoring terms found in text
+          dataset_score: float,        - data-driven phishing probability
+          top_phishing_terms: list,    - high-scoring terms found in text
           term_count: int,
-          dataset_source: list[str],   – dataset names (citations only)
+          dataset_source: list[str],   - dataset names (citations only)
         }
     """
     scores = get_email_term_scores() if mode == "email" else get_sms_term_scores()
@@ -209,7 +209,7 @@ def score_text_against_dataset(text: str, mode: str = "email") -> dict:
 
 def get_all_dataset_info() -> dict:
     """
-    Return metadata and statistics for all four datasets – for the UI info page.
+    Return metadata and statistics for all four datasets - for the UI info page.
     Returns ONLY provenance metadata (name, description, sources, statistics).
     Raw samples are NEVER included in this output.
     """
@@ -224,7 +224,7 @@ def get_all_dataset_info() -> dict:
 
     def _safe_meta(data: dict, dataset_id: str) -> dict:
         meta = data.get("metadata", {})
-        # Strip samples key – return ONLY metadata
+        # Strip samples key - return ONLY metadata
         return {
             "id": dataset_id,
             "name": meta.get("name", ""),

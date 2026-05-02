@@ -1,5 +1,5 @@
-"""
-Phish X – Web launcher
+﻿"""
+Phish X - Web launcher
 Starts the FastAPI server and opens the app in the default browser.
 Run with:  python run_web.py
 """
@@ -40,7 +40,7 @@ def main():
 
     url = "http://127.0.0.1:%d/static/" % port
     print("=" * 55)
-    print("  Phish X – Security Awareness Training Platform")
+    print("  Phish X - Security Awareness Training Platform")
     print("=" * 55)
     print("  Starting server on %s" % url)
     print("  Opening browser automatically…")

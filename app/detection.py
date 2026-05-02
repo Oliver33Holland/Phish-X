@@ -1,4 +1,4 @@
-"""
+﻿"""
 Vishing detection: identifies suspicious speech patterns in transcribed call text.
 
 Pattern sources:
@@ -130,7 +130,7 @@ def analyze_vishing_speech(text: str) -> VishingDetectionResult:
 
     if all_matches:
         recommendations.append(
-            "This transcript contains phrases typical of voice phishing – "
+            "This transcript contains phrases typical of voice phishing - "
             "hang up and call the organisation directly using a known number."
         )
     if "gift card" in matched_lower or "card number" in matched_lower:
@@ -143,7 +143,7 @@ def analyze_vishing_speech(text: str) -> VishingDetectionResult:
     if deepfake_matches:
         recommendations.append(
             "Scripted or over-formal phrasing detected. "
-            "AI-generated (TTS/voice-cloned) calls often use unnatural formal language – "
+            "AI-generated (TTS/voice-cloned) calls often use unnatural formal language - "
             "a key indicator from ASVspoof and FakeAVCeleb research."
         )
     if "warrant" in matched_lower or "arrest" in matched_lower or "bailiff" in matched_lower:

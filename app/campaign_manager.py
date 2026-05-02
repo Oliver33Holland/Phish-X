@@ -1,5 +1,5 @@
 ﻿"""
-Campaign Manager – Phish X
+Campaign Manager - Phish X
 Handles campaign CRUD, target management, scheduling, event tracking,
 credential capture simulation, and real-time stats.
 All emails are SIMULATED (not actually sent). For security training only.
@@ -96,7 +96,7 @@ _DEFAULT_TEMPLATES = [
     {
         "id": "tpl_password_reset",
         "name": "Password Expiry",
-        "subject": "Your password expires in 24 hours – action required",
+        "subject": "Your password expires in 24 hours - action required",
         "sender_name": "IT Helpdesk",
         "sender_email": "helpdesk@company-it-portal.net",
         "body_html": """<p>Hi {first_name},</p>
@@ -118,7 +118,7 @@ _DEFAULT_TEMPLATES = [
     {
         "id": "tpl_ceo_fraud",
         "name": "CEO / Executive Fraud",
-        "subject": "Confidential – urgent request from {ceo_name}",
+        "subject": "Confidential - urgent request from {ceo_name}",
         "sender_name": "Executive Office",
         "sender_email": "ceo@company-executive-office.com",
         "body_html": """<p>Hi {first_name},</p>
@@ -148,7 +148,7 @@ _LINKSEC_CAMPAIGN_TEMPLATES = [
         "id": "tpl_ls_aws_giftcard",
         "name": "[AWS] Gift Card Reward Lure",
         "brand": "Amazon Web Services",
-        "subject": "Exclusive: $100 Amazon Gift Card – Claim Now",
+        "subject": "Exclusive: $100 Amazon Gift Card - Claim Now",
         "sender_name": "AWS Rewards Team",
         "sender_email": "rewards@aws-exclusive-offers.com",
         "body_html": """<p>Dear {first_name},</p>
@@ -210,7 +210,7 @@ _LINKSEC_CAMPAIGN_TEMPLATES = [
         "body_html": """<p>Dear {first_name} {last_name},</p>
 <p>Congratulations! You have been selected to receive a free Microsoft Teams Essentials upgrade for 90 days.</p>
 <p><a href="{phish_link}" style="background:#6264a7;color:white;padding:10px 20px;text-decoration:none;border-radius:4px;">Activate Free Upgrade</a></p>
-<p>Do not miss this limited time offer – it expires in 72 hours.</p>
+<p>Do not miss this limited time offer - it expires in 72 hours.</p>
 <p>Best regards,<br/>Microsoft Teams Promotions</p>""",
     },
     {
@@ -230,7 +230,7 @@ _LINKSEC_CAMPAIGN_TEMPLATES = [
         "id": "tpl_ls_o365_reward",
         "name": "[Microsoft 365] Exclusive Reward Offer",
         "brand": "Microsoft Office 365",
-        "subject": "Exclusive Reward – Microsoft Office 365",
+        "subject": "Exclusive Reward - Microsoft Office 365",
         "sender_name": "Microsoft 365 Rewards Team",
         "sender_email": "rewards@office365-exclusive-rewards.com",
         "body_html": """<p>Dear {first_name},</p>
@@ -308,7 +308,7 @@ _LINKSEC_CAMPAIGN_TEMPLATES = [
         "id": "tpl_ls_slack_giftcard",
         "name": "[Slack] Gift Card Reward Lure",
         "brand": "Slack",
-        "subject": "You've Received a Gift Card – Slack",
+        "subject": "You've Received a Gift Card - Slack",
         "sender_name": "Slack Team",
         "sender_email": "gifts@slack-gift-card-offer.com",
         "body_html": """<p>Dear {first_name},</p>

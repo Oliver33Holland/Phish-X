@@ -1,5 +1,5 @@
 ﻿"""
-Fake Login Page Generator – SECURITY TRAINING USE ONLY.
+Fake Login Page Generator - SECURITY TRAINING USE ONLY.
 
 Generates realistic-looking simulated login pages for phishing awareness training.
 All pages display a visible training overlay and DO NOT collect, store, or transmit
@@ -13,7 +13,7 @@ TRAINING_BANNER = """
   background:#d29922; color:#0d1117; font-family:sans-serif;
   font-size:13px; font-weight:700; text-align:center;
   padding:8px 12px; letter-spacing:0.03em; box-shadow:0 2px 8px rgba(0,0,0,0.4);">
-  &#9888; PHISH X SIMULATION – THIS IS A FAKE PAGE FOR SECURITY TRAINING ONLY.
+  &#9888; PHISH X SIMULATION - THIS IS A FAKE PAGE FOR SECURITY TRAINING ONLY.
   No credentials are collected or transmitted.
   &nbsp;|&nbsp; <span style="text-decoration:underline;cursor:pointer"
     onclick="document.getElementById('phishx-explainer').style.display='block'">
@@ -24,7 +24,7 @@ TRAINING_BANNER = """
   display:none; position:fixed; top:36px; left:0; width:100%; z-index:99998;
   background:#161b22; color:#e6edf3; font-family:sans-serif; font-size:13px;
   padding:16px 24px; border-bottom:1px solid #30363d; line-height:1.6;">
-  <strong>Security Awareness Training – Phish X</strong><br/>
+  <strong>Security Awareness Training - Phish X</strong><br/>
   This page simulates a phishing login page used in real attacks.
   Real attackers clone login pages from Google, Microsoft, banks, etc.
   to steal your credentials.<br/><br/>
@@ -236,7 +236,7 @@ def _bank_page(bank_name: str, spoofed_url: str, accent: str = "#003087") -> str
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>{bank_name} – Secure Online Banking</title>
+  <title>{bank_name} - Secure Online Banking</title>
   <style>
     * {{ box-sizing:border-box; margin:0; padding:0; }}
     body {{ font-family:Arial,sans-serif; background:#f4f4f4; color:#333; }}
@@ -307,7 +307,7 @@ def _office365_page(spoofed_url: str) -> str:
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Sign In – Microsoft 365</title>
+  <title>Sign In - Microsoft 365</title>
   <style>
     * {{ box-sizing:border-box; margin:0; padding:0; }}
     body {{ font-family:'Segoe UI',sans-serif; background:#0078d4;
