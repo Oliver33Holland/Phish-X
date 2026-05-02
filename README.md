@@ -60,25 +60,27 @@ install.cmd
 
 ## Running the App
 
-### Desktop window (recommended)
+### Option 1 - Desktop window (recommended)
 Double-click **`Phish X - Desktop (No Browser).cmd`**
+
+Opens Phish X in its own window. No browser required.
 
 Or from a terminal:
 ```
 "Phish X - Desktop (No Browser).cmd"
 ```
 
-> ⚠️ **The quote marks `"` are essential when typing in a terminal.** The filename contains spaces, so without quotes Windows will only read the first word and show an error. Double-clicking in File Explorer always works without quotes.
-
-### In your browser
+### Option 2 - Browser version (fallback)
 Double-click **`Launch Phish X.cmd`**
+
+Opens the same app in your default web browser at `http://127.0.0.1:8000`. Use this if the desktop window fails to open.
 
 Or from a terminal:
 ```
 "Launch Phish X.cmd"
 ```
 
-> ⚠️ **Always wrap filenames containing spaces in quote marks `"` when using a terminal.**
+> ⚠️ **The quote marks `"` are required when typing filenames with spaces in a terminal.** Double-clicking in File Explorer always works without them.
 
 The app opens at `http://127.0.0.1:8000`
 
