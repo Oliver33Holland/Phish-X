@@ -14,10 +14,10 @@ INSTALLATION
 ------------
 1. Extract the ZIP archive to a folder on your computer
 
-2. Open the "Source Code" folder
+2. Open the extracted "Phish X" folder
 
 3. Double-click "install.cmd"
-   - This creates a virtual environment and installs all dependencies
+   - This creates a virtual environment and installs all required packages
    - Wait for "Installation complete!" to appear, then press any key
 
 4. Double-click "Phish X - Desktop (No Browser).cmd" to launch the app
@@ -25,52 +25,51 @@ INSTALLATION
    - No internet connection required after installation
 
 
-RUNNING FROM TERMINAL (alternative)
--------------------------------------
-Open a terminal, navigate to the Source Code folder, then run:
+RUNNING FROM TERMINAL
+---------------------
+Open a terminal, navigate into the Phish X folder, then run:
 
     install.cmd
     "Phish X - Desktop (No Browser).cmd"
 
-NOTE: The quote marks are required when typing filenames with spaces in a terminal.
+NOTE: Quote marks are required when typing filenames with spaces in a terminal.
 
 
-RUNNING IN BROWSER (alternative launcher)
-------------------------------------------
-Double-click "Launch Phish X.cmd" instead.
+BROWSER VERSION (alternative)
+------------------------------
+If the desktop window fails to open, double-click "Launch Phish X.cmd" instead.
 The app will open at http://127.0.0.1:8000 in your default browser.
 
 
 FEATURES
 --------
-- Email Phishing Detection  : Paste raw email source or plain text for ML analysis
-- Vishing Detection         : Upload call recordings or paste transcripts
-- Gamified Training         : Spot-the-phish mini-game with scoring
-- Campaign Manager          : Create and manage phishing simulation campaigns
-- Fake Login Pages          : Simulated pages for awareness demonstrations
-- Analytics Dashboard       : Track results and campaign outcomes
+- Email Phishing Detection  : Paste raw email source or plain text for ML-based scoring
+- Vishing Detection         : Upload call recordings or paste transcripts to detect scam patterns
+- Gamified Training         : Spot-the-phish mini-game with difficulty levels and scoring
+- Campaign Manager          : Create and manage phishing simulation campaigns with target lists
+- Fake Login Pages          : Simulated credential-harvest pages for training demonstrations
+- Analytics Dashboard       : Track click rates, game scores, and campaign results
 
 
-DEPENDENCIES (installed automatically by install.cmd)
-------------------------------------------------------
-- FastAPI + Uvicorn         : Web framework and server
-- PyQt6 + PyQt6-WebEngine   : Desktop window
-- scikit-learn + joblib     : Machine learning models
-- librosa + numpy           : Audio feature extraction
+DEPENDENCIES (installed automatically)
+---------------------------------------
+- FastAPI + Uvicorn         : Web server and API framework
+- PyQt6 + PyQt6-WebEngine   : Desktop application window
+- scikit-learn + joblib     : Machine learning email classification
+- librosa + numpy           : Audio feature extraction for vishing detection
 - SpeechRecognition + pydub : Speech-to-text transcription
 - pydantic                  : Data validation
 
 
 OPTIONAL: MP4/AUDIO TRANSCRIPTION
 -----------------------------------
-To transcribe MP4 or MP3 files directly, install ffmpeg:
-  Download from: https://ffmpeg.org/download.html
-  Add ffmpeg to your system PATH, then restart the app.
-  Alternatively, paste the transcript manually into the text box provided.
+To transcribe MP4 or MP3 files, install ffmpeg from https://ffmpeg.org/download.html
+Add ffmpeg to your system PATH then restart the app.
+You can also paste a transcript manually into the text box without ffmpeg.
 
 
 TROUBLESHOOTING
 ---------------
-- "Python not found"   : Reinstall Python and tick "Add Python to PATH"
-- Port already in use  : Close other Phish X instances; app tries ports 8000/8001/8080/8888
-- "PyQt6 not found"    : Run install.cmd again to reinstall dependencies
+- "Python not found"     : Reinstall Python and tick "Add Python to PATH"
+- Port already in use    : Close other Phish X instances; app tries 8000, 8001, 8080, 8888
+- Missing packages       : Run install.cmd again to reinstall dependencies
